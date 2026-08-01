@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
+  BookOpen,
 } from 'lucide-react';
 import { Settings as SettingsIcon } from 'lucide-react';
 
@@ -64,12 +65,13 @@ function Layout() {
           `}
         >
           <div className="flex items-center gap-2">
-            <span className="text-2xl flex-shrink-0">📓</span>
-            {!isCollapsed && (
-              <span className="text-xl font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">
-                Journal
-              </span>
-            )}
+            <span className="text-2xl flex-shrink-0"></span>
+              {!isCollapsed && (
+                <span className="text-xl font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap flex items-center gap-1">
+                  <BookOpen className="w-5 h-5" />
+                    Journal
+                </span>
+              )}
           </div>
 
           {/* Tombol Collapse */}

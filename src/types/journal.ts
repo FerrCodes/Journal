@@ -9,6 +9,7 @@ export interface JournalEntry {
   weather: string | null;
   tags: string[];
   created_at: string;
+  custom_date?: string;
 }
 
 export const MOOD_OPTIONS = [

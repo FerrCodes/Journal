@@ -2,7 +2,8 @@ import { Outlet, useNavigate, NavLink } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { useTheme } from '../context/ThemeContext';
 import { toast } from 'react-toastify';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import SettingsModal from './SettingsModal';
 import {
   LayoutDashboard,
   PenSquare,
@@ -14,14 +15,19 @@ import {
   ChevronRight,
   Menu,
   BookOpen,
+  Settings,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
-import { Settings as SettingsIcon } from 'lucide-react';
 
 function Layout() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -32,31 +38,67 @@ function Layout() {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
+  const toggleUserDropdown = () => setIsUserDropdownOpen(!isUserDropdownOpen);
+  const closeUserDropdown = () => setIsUserDropdownOpen(false);
+
+  // Tutup dropdown saat klik di luar
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        closeUserDropdown();
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Ambil user info dari Supabase
+  const [userEmail, setUserEmail] = useState<string>('');
+  const [userName, setUserName] = useState<string>('');
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserEmail(user.email || '');
+        setUserName(user.user_metadata?.full_name || user.email?.split('@')[0] || 'User');
+      }
+    };
+    getUser();
+  }, []);
 
   const navItems = [
     { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/create', icon: PenSquare, label: 'Tambah' },
     { to: '/stats', icon: BarChart3, label: 'Statistik' },
-    { to: '/settings', icon: SettingsIcon, label: 'Pengaturan' },
   ];
+
+  // Ambil inisial untuk avatar
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex">
       {/* ===== SIDEBAR ===== */}
       <aside
-        className={`
-          fixed md:sticky top-0 left-0 z-40 h-screen 
-          bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700
-          transition-all duration-300 ease-in-out
-          flex flex-col
-          overflow-hidden
-          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-          md:translate-x-0
-          ${isCollapsed ? 'md:w-20' : 'md:w-64'}
-          w-64
-        `}
-      >
-        {/* HEADER SIDEBAR: Logo + Tombol Collapse */}
+          className={`
+            fixed md:sticky top-0 left-0 z-40 h-screen 
+            bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700
+            transition-all duration-300 ease-in-out
+            flex flex-col
+            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+            md:translate-x-0
+            ${isCollapsed ? 'md:w-20' : 'md:w-64'}
+            w-64
+          `}
+        >
+        {/* HEADER: Logo + Tombol Collapse */}
         <div
           className={`
             p-3 border-b border-gray-200 dark:border-slate-700 
@@ -66,12 +108,12 @@ function Layout() {
         >
           <div className="flex items-center gap-2">
             <span className="text-2xl flex-shrink-0"></span>
-              {!isCollapsed && (
-                <span className="text-xl font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap flex items-center gap-1">
-                  <BookOpen className="w-5 h-5" />
-                    Journal
-                </span>
-              )}
+            {!isCollapsed && (
+              <span className="text-xl font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap flex items-center gap-1">
+                <BookOpen className="w-5 h-5" />
+                Journal
+              </span>
+            )}
           </div>
 
           {/* Tombol Collapse */}
@@ -92,7 +134,7 @@ function Layout() {
           </button>
         </div>
 
-        {/* NAVIGATION */}
+        {/* NAVIGATION (pusat) */}
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {navItems.map(({ to, icon: Icon, label }) => (
             <NavLink
@@ -115,41 +157,105 @@ function Layout() {
           ))}
         </nav>
 
-        {/* BOTTOM: Dark Mode + Logout */}
-        <div className="p-3 border-t border-gray-200 dark:border-slate-700 space-y-1">
+        {/* ===== USER DROPDOWN (di Bawah Sidebar) ===== */}
+        <div className="border-t border-gray-200 dark:border-slate-700 p-2 relative" ref={dropdownRef}>
+          {/* Trigger: Avatar + Nama + Chevron */}
           <button
-            onClick={toggleTheme}
+            onClick={toggleUserDropdown}
             className={`
-              flex w-full items-center gap-3 px-3 py-3 rounded-lg 
-              text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition
-              ${isCollapsed ? 'justify-center' : 'justify-start'}
+              w-full flex items-center gap-2 px-3 py-2 rounded-xl 
+              hover:bg-gray-100 dark:hover:bg-slate-800 transition
+              ${isCollapsed ? 'justify-center' : 'justify-between'}
             `}
           >
-            {theme === 'light' ? (
-              <Moon className={`flex-shrink-0 ${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'}`} />
-            ) : (
-              <Sun className={`flex-shrink-0 ${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'}`} />
-            )}
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold shadow-md flex-shrink-0">
+                {getInitials(userName)}
+              </div>
+              {!isCollapsed && (
+                <div className="flex-1 min-w-0 text-left">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                    {userName}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    {userEmail}
+                  </p>
+                </div>
+              )}
+            </div>
             {!isCollapsed && (
-              <span className="text-sm font-medium whitespace-nowrap">
-                {theme === 'light' ? 'Mode Gelap' : 'Mode Terang'}
+              <span className="text-gray-400 flex-shrink-0">
+                {isUserDropdownOpen ? (
+                  <ChevronUp className="w-4 h-4" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
               </span>
             )}
           </button>
-
-          <button
-            onClick={handleLogout}
-            className={`
-              flex w-full items-center gap-3 px-3 py-3 rounded-lg 
-              text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition
-              ${isCollapsed ? 'justify-center' : 'justify-start'}
-            `}
-          >
-            <LogOut className={`flex-shrink-0 ${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'}`} />
-            {!isCollapsed && (
-              <span className="text-sm font-medium whitespace-nowrap">Logout</span>
-            )}
-          </button>
+          
+          {/* Dropdown Menu (muncul ke ATAS) */}
+          {isUserDropdownOpen && !isCollapsed && (
+            <div className="absolute bottom-full left-0 right-0 mb-1 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden animate-fadeInUp">
+              <div className="p-1 space-y-0.5">
+                {/* Pengaturan */}
+                <button
+                  onClick={() => {
+                    setIsSettingsOpen(true);
+                    closeUserDropdown();
+                  }}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group w-full"
+                >
+                  <Settings className="w-5 h-5 text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400" />
+                  <span className="text-sm font-medium">Pengaturan</span>
+                </button>
+          
+                {/* Mode Gelap dengan Toggle */}
+                <button
+                  onClick={toggleTheme}
+                  className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group"
+                >
+                  <div className="flex items-center gap-3">
+                    {theme === 'light' ? (
+                      <Moon className="w-5 h-5 text-gray-400 group-hover:text-indigo-500" />
+                    ) : (
+                      <Sun className="w-5 h-5 text-yellow-400 group-hover:text-yellow-300" />
+                    )}
+                    <span className="text-sm font-medium">
+                      {theme === 'light' ? 'Mode Gelap' : 'Mode Terang'}
+                    </span>
+                  </div>
+                  {/* Toggle Switch */}
+                  <div
+                    className={`w-10 h-5 rounded-full transition ${
+                      theme === 'dark' ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                  >
+                    <div
+                      className={`w-4 h-4 bg-white rounded-full transition-transform shadow-sm ${
+                        theme === 'dark' ? 'translate-x-5' : 'translate-x-0.5'
+                      } mt-0.5`}
+                    />
+                  </div>
+                </button>
+                    
+                {/* Divider */}
+                <div className="border-t border-gray-200 dark:border-slate-700 my-1" />
+                    
+                {/* Logout */}
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    closeUserDropdown();
+                  }}
+                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition group"
+                >
+                  <LogOut className="w-5 h-5 text-red-500 group-hover:text-red-600" />
+                  <span className="text-sm font-medium">Logout</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </aside>
 
@@ -163,6 +269,7 @@ function Layout() {
 
       {/* ===== MAIN CONTENT ===== */}
       <div className="flex-1 flex flex-col min-h-screen">
+        {/* Top Navbar (ringkas) */}
         <header className="sticky top-0 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-slate-700 px-4 py-3 md:px-6 flex items-center gap-4">
           <button
             onClick={toggleSidebar}
@@ -171,29 +278,17 @@ function Layout() {
           >
             <Menu className="w-6 h-6" />
           </button>
-
-          <h1 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+          <h1 className="text-lg font-semibold text-gray-800 dark:text-gray-200 flex-1">
             Jurnal Harian
           </h1>
-
-          <div className="flex-1"></div>
-
-          <button
-            onClick={toggleTheme}
-            className="md:hidden p-2 rounded-lg bg-gray-100 dark:bg-slate-800"
-          >
-            {theme === 'light' ? (
-              <Moon className="w-5 h-5" />
-            ) : (
-              <Sun className="w-5 h-5" />
-            )}
-          </button>
         </header>
 
+        {/* Content */}
         <main className="flex-1 p-4 md:p-6 max-w-5xl mx-auto w-full">
           <Outlet />
         </main>
       </div>
+      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { supabase } from '../services/supabase';
 import type { JournalEntry } from '../types/journal';
 import { MOOD_OPTIONS } from '../types/journal';
 import { Skeleton } from '../components/Skeleton';
+import ConfirmModal from '../components/ConfirmModal';
 import { 
   Pencil, 
   Trash2, 
@@ -26,6 +27,7 @@ function DetailEntry() {
   const [editDate, setEditDate] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const fetchEntry = useCallback(async () => {
     setLoading(true);
@@ -66,25 +68,25 @@ function DetailEntry() {
   }, [fetchEntry]);
 
   const handleDelete = async () => {
-    if (!entry || !id) return;
+  if (!entry || !id) return;
+  setIsConfirmOpen(true);
+};
 
-    const confirmDelete = window.confirm('Yakin mau hapus jurnal ini?');
-    if (!confirmDelete) return;
+const confirmDelete = async () => {
+  try {
+    const { error } = await supabase
+      .from('entries')
+      .delete()
+      .eq('id', id);
 
-    try {
-      const { error } = await supabase
-        .from('entries')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-      toast.success('🗑️ Jurnal berhasil dihapus!');
-      navigate('/');
-    } catch (err: unknown) {
-      setError((err as Error).message);
-      toast.error('❌ Gagal menghapus jurnal: ' + (err as Error).message);
-    }
-  };
+    if (error) throw error;
+    toast.success('🗑️ Jurnal berhasil dihapus!');
+    navigate('/');
+  } catch (err: unknown) {
+    setError((err as Error).message);
+    toast.error('❌ Gagal menghapus jurnal: ' + (err as Error).message);
+  }
+};
 
   const getMoodEmoji = (mood: number) => {
     const found = MOOD_OPTIONS.find((m) => m.value === mood);
@@ -357,6 +359,16 @@ function DetailEntry() {
               </div>
             </div>
           )}
+          <ConfirmModal
+            isOpen={isConfirmOpen}
+            onClose={() => setIsConfirmOpen(false)}
+            onConfirm={confirmDelete}
+            title="Hapus Jurnal?"
+            message={`Apakah kamu yakin ingin menghapus jurnal "${entry?.title || 'Tanpa Judul'}"? Tindakan ini tidak bisa dibatalkan.`}
+            confirmText="Ya, Hapus"
+            cancelText="Batal"
+            type="danger"
+          />
         </div>
       </div>
     </div>

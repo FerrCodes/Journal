@@ -10,7 +10,6 @@ import EditEntry from './pages/EditEntry';
 import Stats from './pages/Stats';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Settings from './pages/Settings';
 
 function App() {
   const { theme } = useTheme();
@@ -35,7 +34,6 @@ return (
       </Route>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="settings" element={<Settings />} />
     </Routes>
   </BrowserRouter>
 );

@@ -128,111 +128,123 @@ function Dashboard() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-            <BookOpen className="w-8 h-8 text-blue-500" />
-            Daftar Jurnal
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-            {totalEntries} entri • Terakhir: {latestMood ? getMoodEmoji(latestMood) : 'Belum ada'}
-          </p>
-        </div>
-        <Link
-          to="/create"
-          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md hover:shadow-lg"
-        >
-          <PenSquare className="w-4 h-4" />
-          Tulis Baru
-        </Link>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+      <div className="flex-1 min-w-0">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2 truncate">
+          <BookOpen className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 text-blue-500 flex-shrink-0" />
+          <span className="truncate">Daftar Jurnal</span>
+        </h1>
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+          {totalEntries} entri • Terakhir: {latestMood ? getMoodEmoji(latestMood) : 'Belum ada'}
+        </p>
       </div>
+      <Link
+        to="/create"
+        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl transition flex items-center gap-1 sm:gap-2 text-sm sm:text-base flex-shrink-0"
+      >
+        <PenSquare className="w-3 h-3 sm:w-4 sm:h-4" />
+        <span className="hidden xs:inline">Tulis Baru</span>
+        <span className="xs:hidden">Tambah</span>
+      </Link>
+    </div>
 
       {/* Stats Cards */}
-      {totalEntries > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{totalEntries}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Total Jurnal</p>
-              </div>
-            </div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
+  {totalEntries > 0 && (
+    <>
+      {/* Total Jurnal */}
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="p-1.5 sm:p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex-shrink-0">
+            <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" />
           </div>
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                <Smile className="w-5 h-5 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {mostCommonMood ? getMoodEmoji(Number(mostCommonMood)) : '😐'}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Mood Terbanyak</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                <BarChart3 className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {Object.keys(moodCount).length}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Variasi Mood</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-                <Filter className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {entries.filter(e => e.tags && e.tags.length > 0).length}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Dengan Tag</p>
-              </div>
-            </div>
+          <div className="min-w-0">
+            <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{totalEntries}</p>
+            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">Total Jurnal</p>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Mood Terbanyak */}
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="p-1.5 sm:p-2 bg-green-100 dark:bg-green-900/30 rounded-lg flex-shrink-0">
+            <Smile className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 dark:text-green-400" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {mostCommonMood ? getMoodEmoji(Number(mostCommonMood)) : '😐'}
+            </p>
+            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">Mood Terbanyak</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Variasi Mood */}
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="p-1.5 sm:p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex-shrink-0">
+            <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 dark:text-purple-400" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {Object.keys(moodCount).length}
+            </p>
+            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">Variasi Mood</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Dengan Tag */}
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-slate-700">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="p-1.5 sm:p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex-shrink-0">
+            <Filter className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 dark:text-orange-400" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {entries.filter(e => e.tags && e.tags.length > 0).length}
+            </p>
+            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">Dengan Tag</p>
+          </div>
+        </div>
+      </div>
+    </>
+  )}
+</div>
 
       {/* Search & Filter */}
-      <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 mb-6">
-        <div className="flex flex-wrap gap-3 items-center">
-          <div className="flex-1 min-w-[200px] relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
+      <div className="bg-white dark:bg-slate-800 p-3 sm:p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 mb-6">
+        <div className="flex sm:flex-row flex-wrap gap-2 sm:gap-3 items-start sm:items-center">
+          <div className="w-full sm:flex-1 min-w-[130px] sm:min-w-[200px] relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 text-gray-400 dark:text-gray-500" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari jurnal..."
-              className="w-full pl-9 pr-4 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none transition"
+              className="w-full pl-8 sm:pl-9 pr-3 sm:pr-4 py-2 sm:py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none transition text-sm"
             />
           </div>
           <select
             value={selectedMood ?? ''}
             onChange={(e) => setSelectedMood(e.target.value ? Number(e.target.value) : null)}
-            className="px-4 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none transition"
+            className="flex-1 sm:flex-none w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none transition text-sm"
           >
             <option value="">Semua Mood</option>
             {MOOD_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.emoji} {option.label}
               </option>
+              
             ))}
           </select>
+          {/* Filter Tag */}
           {(entries.some(e => e.tags && e.tags.length > 0)) && (
             <select
               value={selectedTag ?? ''}
               onChange={(e) => setSelectedTag(e.target.value || null)}
-              className="px-4 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none transition"
+              className="flex-1 sm:flex-none w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none transition text-sm"
             >
               <option value="">Semua Tag</option>
               {Array.from(new Set(entries.flatMap(e => e.tags || []))).map((tag) => (
@@ -240,17 +252,18 @@ function Dashboard() {
               ))}
             </select>
           )}
+          {/* ... tag filter ... */}
           {(searchQuery || selectedMood !== null || selectedTag !== null) && (
             <button
               onClick={handleResetFilter}
-              className="px-4 py-2.5 bg-gray-200 hover:bg-gray-300 dark:bg-slate-600 dark:hover:bg-slate-500 text-gray-700 dark:text-gray-300 rounded-xl transition flex items-center gap-1"
+              className="px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 hover:bg-gray-300 dark:bg-slate-600 dark:hover:bg-slate-500 text-gray-700 dark:text-gray-300 rounded-xl transition flex items-center gap-1 text-sm"
             >
-              <X className="w-4 h-4" />
-              Reset
+              <X className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline">Reset</span>
             </button>
           )}
         </div>
-        <div className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+        <div className="mt-2 sm:mt-3 text-center sm:text-center text-gray-500 dark:text-gray-400">
           Menampilkan {filteredEntries.length} dari {entries.length} jurnal
         </div>
       </div>
@@ -267,51 +280,46 @@ function Dashboard() {
           </p>
           {entries.length === 0 && (
             <Link to="/create" className="inline-block mt-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-5 py-2.5 rounded-xl transition">
-              ✏️ Tulis Jurnal
+              Tulis Jurnal
             </Link>
           )}
         </div>
-      ) : (
-        <div className="space-y-4">
+        ) : (
+        <div className="space-y-3 sm:space-y-4">
           {filteredEntries.map((entry) => (
             <Link
               key={entry.id}
               to={`/entry/${entry.id}`}
-              className="block bg-white dark:bg-slate-800 rounded-2xl shadow-sm hover:shadow-lg border border-gray-100 dark:border-slate-700 p-5 transition-all duration-200 hover:scale-[1.01]"
+              className="block bg-white dark:bg-slate-800 rounded-2xl shadow-sm hover:shadow-lg border border-gray-100 dark:border-slate-700 p-4 sm:p-5 transition-all duration-200 hover:scale-[1.01]"
             >
-              <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xl">{getMoodEmoji(entry.mood)}</span>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
+                    <h3 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
                       {entry.title || 'Tanpa Judul'}
                     </h3>
                     {entry.tags && entry.tags.length > 0 && (
-                      <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full text-xs">
+                      <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs">
                         #{entry.tags[0]}
                         {entry.tags.length > 1 && ` +${entry.tags.length - 1}`}
                       </span>
                     )}
                   </div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 mb-1">
+                  <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm line-clamp-2 mb-1">
                     {entry.content}
                   </p>
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-3 text-[10px] sm:text-xs text-gray-400 dark:text-gray-500">
                     <span>📅 {formatDate(entry.created_at)}</span>
                     {entry.song_title && (
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-0.5 sm:gap-1 truncate max-w-[120px] sm:max-w-[200px]">
                         🎵 {entry.song_title}
                         {entry.song_artist && ` - ${entry.song_artist}`}
                       </span>
                     )}
-                    {entry.weather && (
-                      <span>☁️ {entry.weather}</span>
-                    )}
+                    {entry.weather && <span>☁️ {entry.weather}</span>}
                   </div>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <span className="text-gray-300 dark:text-gray-600 text-sm">→</span>
-                </div>
+                <span className="text-gray-300 dark:text-gray-600 text-sm hidden sm:block">→</span>
               </div>
             </Link>
           ))}

@@ -4,7 +4,8 @@ import { supabase } from '../services/supabase';
 import { MOOD_OPTIONS } from '../types/journal';
 import type { MoodValue } from '../types/journal';
 import { toast } from 'react-toastify';
-import { PenSquare, Save, Tag, Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { PenSquare, Save, Tag, Loader2, ArrowLeft } from 'lucide-react';
 import { searchSongs } from '../services/lastfm';
 
 function CreateEntry() {
@@ -110,25 +111,35 @@ function CreateEntry() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-        <PenSquare className="w-6 h-6" />
-        Tulis Jurnal Baru
-      </h2>
+      <div className="flex justify-between items-center mb-04">
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+          <PenSquare className="w-6 h-6" />
+          Tulis Jurnal Baru
+        </h2>
+        <Link
+          to="/"
+          className="bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Kembali
+        </Link>
+      </div>
+        
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-300">Judul (Opsional)</label>
+          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-300 text-sm sm:text-base">Judul (Opsional)</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Judul hari ini..."
-            className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none"
-          />
+            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+            />
         </div>
 
         <div>
-          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-300">
+          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
             Isi Jurnal <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -137,12 +148,12 @@ function CreateEntry() {
             required
             rows={6}
             placeholder="Ceritakan hari ini..."
-            className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none resize-y"
+            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none resize-y text-sm sm:text-base"
           />
         </div>
 
         <div>
-          <label className="block font-medium mb-2 text-gray-700 dark:text-gray-300">
+          <label className="block font-medium mb-2 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
             Mood Hari Ini <span className="text-red-500">*</span>
           </label>
           <div className="flex flex-wrap gap-2">
@@ -151,7 +162,7 @@ function CreateEntry() {
                 key={option.value}
                 type="button"
                 onClick={() => setMood(option.value)}
-                className={`px-4 py-2 rounded-lg transition ${
+                className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg transition text-xs sm:text-sm ${
                   mood === option.value
                     ? 'border-2 border-blue-500 bg-blue-50 dark:bg-blue-900/30'
                     : 'border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700'
@@ -176,7 +187,7 @@ function CreateEntry() {
                   handleSearchSong(e.target.value);
                 }}
                 placeholder="Judul Lagu"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
               />
               {isSearching && (
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -212,20 +223,20 @@ function CreateEntry() {
               value={songArtist}
               onChange={(e) => setSongArtist(e.target.value)}
               placeholder="Artis"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
             />
             <input
               type="url"
               value={songUrl}
               onChange={(e) => setSongUrl(e.target.value)}
               placeholder="Link Spotify/YouTube"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
             />
           </div>
         </div>
 
         <div>
-          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-300">Cuaca (Opsional)</label>
+          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-300 text-sm sm:text-base">Cuaca (Opsional)</label>
           <input
             type="text"
             value={weather}
@@ -288,7 +299,7 @@ function CreateEntry() {
         <button
           type="submit"
           disabled={loading || !content}
-          className="w-full py-3 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition flex items-center justify-center gap-2"
+          className="w-full py-2.5 sm:py-3 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition flex items-center justify-center gap-2 text-sm sm:text-base"
         >
           {loading ? (
             'Menyimpan...'

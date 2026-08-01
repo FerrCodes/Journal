@@ -105,7 +105,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
       if (error) throw error;
       setTotalEntries(0);
-      toast.success('🗑️ Semua jurnal berhasil dihapus!');
+      toast.success('✅ Semua jurnal berhasil dihapus!');
     } catch (err: unknown) {
       toast.error('❌ Gagal menghapus: ' + (err as Error).message);
     } finally {
@@ -126,7 +126,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
       if (error) throw error;
       if (!entries || entries.length === 0) {
-        toast.info('📭 Belum ada jurnal untuk diekspor.');
+        toast.info('Belum ada jurnal untuk diekspor.');
         return;
       }
 
@@ -158,8 +158,8 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[80vh] h-[500px] overflow-hidden mx-4 animate-scaleIn flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-full sm:max-w-3xl max-h-[85vh] h-[520px] sm:h-[500px] overflow-hidden mx-2 sm:mx-4 animate-scaleIn flex flex-col">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between flex-shrink-0">
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
@@ -175,15 +175,15 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         </div>
 
         {/* Body */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Sidebar Kiri */}
-          <div className="w-48 flex-shrink-0 border-r border-gray-200 dark:border-slate-700 overflow-y-auto p-2">
+        <div className="flex flex-1 overflow-hidden flex-col sm:flex-row">
+          {/* Sidebar Kiri (Desktop) - muncul di sm: ke atas */}
+          <div className="hidden sm:flex sm:w-48 flex-shrink-0 border-r border-gray-200 dark:border-slate-700 overflow-y-auto p-2 flex-col gap-1">
             {menuItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
                 className={`
-                  w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition
+                  flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition
                   ${activeTab === item.id
                     ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
@@ -192,6 +192,26 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               >
                 <item.icon className="w-4 h-4" />
                 <span className="font-medium">{item.label}</span>
+              </button>
+            ))}
+          </div>
+          
+          {/* Tab Navigation (Mobile) - hanya di HP */}
+          <div className="flex sm:hidden gap-1 px-3 pt-3 border-b border-gray-200 dark:border-slate-700 overflow-x-auto">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`
+                  flex items-center gap-1.5 px-3 py-2 rounded-t-xl text-xs font-medium transition whitespace-nowrap
+                  ${activeTab === item.id
+                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-b-2 border-blue-500'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                  }
+                `}
+              >
+                <item.icon className="w-3.5 h-3.5" />
+                <span>{item.label}</span>
               </button>
             ))}
           </div>

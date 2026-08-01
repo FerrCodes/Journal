@@ -4,7 +4,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { MOOD_OPTIONS } from '../types/journal';
 import type { MoodValue } from '../types/journal';
-import { Pencil, ArrowLeft, Save, Tag } from 'lucide-react';
+import { Pencil, ArrowLeft, Save, Tag} from 'lucide-react';
 
 function EditEntry() {
   const { id } = useParams<{ id: string }>();
@@ -142,15 +142,19 @@ const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Link to={`/entry/${id}`} className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 inline-block mb-4 items-center gap-1">
-        <ArrowLeft className="w-4 h-4" />
-        Kembali ke Detail
-      </Link>
-
-      <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100 flex items-center gap-2">
-        <Pencil className="w-6 h-6" />
-        Edit Jurnal
-      </h2>
+      <div className="flex justify-between items-center mb-04">
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+          <Pencil className="w-6 h-6" />
+          Edit Jurnal
+        </h2>
+        <Link
+          to={`/entry/${id}`}
+          className="bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Kembali ke Detail
+        </Link>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

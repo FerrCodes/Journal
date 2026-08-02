@@ -86,7 +86,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
   const handleDeleteAll = () => {
     if (totalEntries === 0) {
-      toast.info('📭 Belum ada jurnal untuk dihapus.');
+      toast.info('Belum ada jurnal untuk dihapus.');
       return;
     }
     setIsConfirmOpen(true);
@@ -105,7 +105,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
       if (error) throw error;
       setTotalEntries(0);
-      toast.success('✅ Semua jurnal berhasil dihapus!');
+      toast.success('Semua jurnal berhasil dihapus!');
     } catch (err: unknown) {
       toast.error('❌ Gagal menghapus: ' + (err as Error).message);
     } finally {
@@ -131,7 +131,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       }
 
       await exportAllEntries(entries);
-      toast.success('✅ Data berhasil diekspor!');
+      toast.success('Data berhasil diekspor!');
     } catch (err: unknown) {
       toast.error('❌ Gagal ekspor data: ' + (err as Error).message);
     }
@@ -410,7 +410,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     <Trash2 className="w-5 h-5" />
                     <span>{isDeleting ? 'Menghapus...' : `Hapus Semua Jurnal (${totalEntries})`}</span>
                   </button>
-                  <p className="text-xs text-red-500 dark:text-red-400">⚠️ Tindakan ini tidak bisa dibatalkan.</p>
+                  <p className="text-xs text-red-500 dark:text-red-400">Tindakan ini tidak bisa dibatalkan.</p>
                 </div>
               </div>
             )}
@@ -421,8 +421,8 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tentang</h3>
                 <div className="space-y-3 text-gray-700 dark:text-gray-300">
                   <p><strong>Journal App</strong> — Aplikasi jurnal harian modern.</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Dibuat dengan ❤️ menggunakan React, Vite, TypeScript, dan Tailwind CSS.</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Versi: <span className="font-mono">1.0.0</span></p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Dibuat oleh Feri</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Versi: <span className="font-mono">1.5.0</span></p>
                 </div>
               </div>
             )}
@@ -435,7 +435,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={confirmDeleteAll}
         title="Hapus Semua Jurnal?"
-        message={`⚠️ Kamu akan menghapus SEMUA ${totalEntries} jurnal. Tindakan ini TIDAK BISA DIBATALKAN!`}
+        message={`Kamu akan menghapus SEMUA ${totalEntries} jurnal. Tindakan ini TIDAK BISA DIBATALKAN!`}
         confirmText="Ya, Hapus Semua"
         cancelText="Batal"
         type="danger"

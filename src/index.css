@@ -171,3 +171,18 @@ html.dark ::-webkit-scrollbar-thumb {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Fix kalender melebar */
+.calendar-grid {
+  table-layout: fixed;
+  width: 100%;
+  max-width: 100%;
+}
+
+.calendar-grid > * {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

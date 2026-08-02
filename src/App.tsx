@@ -10,6 +10,7 @@ import EditEntry from './pages/EditEntry';
 import Stats from './pages/Stats';
 import Calendar from './pages/Calendar';
 import Archive from './pages/Archive';
+import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
@@ -35,6 +36,7 @@ return (
         <Route path="stats" element={<Stats />} />
         <Route path="calendar" element={<Calendar />} />
         <Route path="archive" element={<Archive />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />

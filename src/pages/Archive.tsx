@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../services/supabase';
 import { Link } from 'react-router-dom';
-import { Archive, ArchiveRestore } from 'lucide-react';
+import { Archive, ArchiveRestore, Calendar } from 'lucide-react';
 import type { JournalEntry } from '../types/journal';
 import { MOOD_OPTIONS } from '../types/journal';
 import { toast } from 'react-toastify';
@@ -87,13 +87,15 @@ function ArchivePage() {
             className="inline-flex items-center gap-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-sm"
           >
             <span className="hidden sm:inline">← Kembali ke Dashboard</span>
-            <span className="sm:hidden">← Kembali</span>
+            <span className="sm:hidden">←</span>
           </Link>
         </div>
+        <p className="mt-2 text-sm mb-4 text-gray-500 dark:text-gray-400">
+          Semua jurnal yang diarsipkan akan muncul di sini. Kamu bisa mengembalikannya ke Dashboard kapan saja.
+        </p>
 
       {entries.length === 0 ? (
         <div className="text-center py-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
-          <div className="text-6xl mb-4">📭</div>
           <p className="text-lg text-gray-700 dark:text-gray-300">Belum ada jurnal yang diarsipkan</p>
         </div>
       ) : (
@@ -105,13 +107,14 @@ function ArchivePage() {
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">{getMoodEmoji(entry.mood)}</span>
-                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 truncate">
+                  <span className="text-1xl">{getMoodEmoji(entry.mood)}</span>
+                  <h3 className="text-sm sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 truncate">
                     {entry.title || 'Tanpa Judul'}
                   </h3>
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  📅 {formatDate(entry.created_at)}
+                  <Calendar className="w-3 h-3 inline mr-1" />
+                  {formatDate(entry.created_at)}
                 </p>
               </div>
               <button
@@ -126,6 +129,7 @@ function ArchivePage() {
         </div>
       )}
     </div>
+    
   );
 }
 

@@ -1,4 +1,4 @@
-import { Outlet, useNavigate, NavLink } from 'react-router-dom';
+import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { useTheme } from '../context/ThemeContext';
 import { toast } from 'react-toastify';
@@ -13,12 +13,11 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Menu,
   Settings,
   ChevronUp,
   ChevronDown,
   Calendar,
-  Archive
+  Archive,
 } from 'lucide-react';
 
 function Layout() {
@@ -41,6 +40,9 @@ function Layout() {
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
   const toggleUserDropdown = () => setIsUserDropdownOpen(!isUserDropdownOpen);
   const closeUserDropdown = () => setIsUserDropdownOpen(false);
+  const location = useLocation();
+  const isActive = (path: string) => location.pathname === path;
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   // Tutup dropdown saat klik di luar
   useEffect(() => {
@@ -68,6 +70,16 @@ function Layout() {
     getUser();
   }, []);
 
+  useEffect(() => {
+  const handleClickOutside = () => {
+    if (isProfileDropdownOpen) {
+      setIsProfileDropdownOpen(false);
+    }
+  };
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => document.removeEventListener('mousedown', handleClickOutside);
+}, [isProfileDropdownOpen]);
+
   const navItems = [
     { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/create', icon: PenSquare, label: 'Tambah' },
@@ -75,6 +87,15 @@ function Layout() {
     { to: '/calendar', icon: Calendar, label: 'Kalender' },
     { to: '/archive', icon: Archive, label: 'Arsip' },
   ];
+
+  // Untuk bottom navigation (mobile)
+const bottomNavItems = [
+  { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/calendar', icon: Calendar, label: 'Kalender' },
+  { to: '/create', icon: PenSquare, label: 'Jurnal Baru' },
+  { to: '/stats', icon: BarChart3, label: 'Stats' },
+  { to: '/settings', icon: Settings, label: 'Pengaturan' },
+];
 
   // Ambil inisial untuk avatar
   const getInitials = (name: string) => {
@@ -273,25 +294,72 @@ function Layout() {
       {/* ===== MAIN CONTENT ===== */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Top Navbar (ringkas) */}
-        <header className="sticky top-0 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-slate-700 px-4 py-3 md:px-6 flex items-center gap-4">
-          <button
-            onClick={toggleSidebar}
-            className="md:hidden text-2xl text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
-            aria-label="Toggle sidebar"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-          <h1 className="text-lg font-semibold text-gray-800 dark:text-gray-200 flex-1">
-            Jurnal Harian
-          </h1>
-        </header>
+        <button
+        onClick={toggleSidebar}
+        className="md:hidden text-2xl text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+        aria-label="Toggle sidebar"
+      >
+      </button>
 
         {/* Content */}
-        <main className="flex-1 p-4 md:p-6 max-w-5xl mx-auto w-full">
+        <main className="flex-1 p-4 md:p-6 max-w-5xl mx-auto w-full pb-20 md:pb-6">
           <Outlet />
         </main>
       </div>
       <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+{/* ===== BOTTOM NAVIGATION (Mobile Only) ===== */}
+<div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700 md:hidden">
+  <div className="flex items-center justify-around px-1 py-1.5">
+    {bottomNavItems.map(({ to, icon: Icon, label }) => {
+      const isTulis = to === '/create';
+      const active = isActive(to);
+
+      return (
+        <NavLink
+          key={to}
+          to={to}
+          onClick={closeSidebar}
+          className={`flex flex-col items-center transition-all duration-200 ${
+            active
+              ? 'text-blue-500 dark:text-blue-400'
+              : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
+          }`}
+        >
+          <div
+            className={`flex items-center justify-center rounded-full transition-all duration-200 ${
+              isTulis
+                ? active
+                  ? 'w-14 h-14 -mt-4 bg-blue-500/20 dark:bg-blue-500/30 border-2 border-blue-500'
+                  : 'w-12 h-12 -mt-2 bg-blue-500/10 dark:bg-blue-500/20'
+                : active
+                ? 'w-14 h-12 -mt-2'
+                : 'w-12 h-10'
+            }`}
+          >
+            <Icon
+              className={`transition-all duration-200 ${
+                isTulis
+                  ? active
+                    ? 'w-7 h-7 text-blue-500'
+                    : 'w-6 h-6 text-blue-500 dark:text-blue-400'
+                  : active
+                  ? 'w-7 h-7 scale-110'
+                  : 'w-5 h-5'
+              }`}
+            />
+          </div>
+          <span
+            className={`text-[9px] font-medium transition-all duration-200 ${
+              active ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'
+            }`}
+          >
+            {label}
+          </span>
+        </NavLink>
+      );
+    })}
+  </div>
+</div>
     </div>
   );
 }

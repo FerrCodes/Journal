@@ -4,7 +4,7 @@ import { useReminder } from '../hooks/useReminder';
 import { supabase } from '../services/supabase';
 import { toast } from 'react-toastify';
 import {
-  User,
+  UserRound,
   Mail,
   Moon,
   Sun,
@@ -21,8 +21,9 @@ import {
 } from 'lucide-react';
 import { exportAllEntries } from '../utils/exportPDF';
 import ConfirmModal from '../components/ConfirmModal';
+import { Link } from 'react-router-dom';
 
-type MenuTab = 'general' | 'theme' | 'profile' | 'data' | 'about';
+type MenuTab = 'general' | 'profile' | 'data' | 'about';
 
 function Settings() {
   const { theme, toggleTheme } = useTheme();
@@ -34,6 +35,13 @@ function Settings() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
+  const menuItems = [
+    { id: 'general', icon: SettingsIcon, label: 'Umum' },
+    { id: 'profile', icon: UserRound, label: 'Profil' },
+    { id: 'data', icon: Database, label: 'Data' },
+    { id: 'about', icon: Info, label: 'Tentang' },
+  ] as const;
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -64,7 +72,7 @@ function Settings() {
 
   const handleDeleteAll = () => {
     if (totalEntries === 0) {
-      toast.info('Belum ada jurnal untuk dihapus.');
+      toast.info('📭 Belum ada jurnal untuk dihapus.');
       return;
     }
     setIsConfirmOpen(true);
@@ -82,9 +90,8 @@ function Settings() {
         .eq('user_id', user.id);
 
       if (error) throw error;
-
       setTotalEntries(0);
-      toast.success('Semua jurnal berhasil dihapus!');
+      toast.success('✅ Semua jurnal berhasil dihapus!');
     } catch (err: unknown) {
       toast.error('❌ Gagal menghapus: ' + (err as Error).message);
     } finally {
@@ -110,19 +117,11 @@ function Settings() {
       }
 
       await exportAllEntries(entries);
-      toast.success('Data berhasil diekspor!');
+      toast.success('✅ Data berhasil diekspor!');
     } catch (err: unknown) {
       toast.error('❌ Gagal ekspor data: ' + (err as Error).message);
     }
   };
-
-  const menuItems = [
-    { id: 'general', icon: SettingsIcon, label: 'Umum' },
-    { id: 'theme', icon: Sun, label: 'Tema' },
-    { id: 'profile', icon: User, label: 'Profil' },
-    { id: 'data', icon: Database, label: 'Data' },
-    { id: 'about', icon: Info, label: 'Tentang' },
-  ] as const;
 
   if (isLoading) {
     return (
@@ -137,42 +136,52 @@ function Settings() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8 flex items-center gap-2">
-        <SettingsIcon className="w-7 h-7 text-blue-500" />
-        Pengaturan
-      </h1>
-
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* ===== SIDEBAR KIRI ===== */}
-        <div className="md:w-56 flex-shrink-0">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden sticky top-4">
-            {menuItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`
-                  w-full flex items-center gap-3 px-4 py-3 text-sm transition
-                  ${activeTab === item.id
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-r-4 border-blue-500'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700'
-                  }
-                `}
-              >
-                <item.icon className="w-4 h-4" />
-                <span className="font-medium">{item.label}</span>
-              </button>
-            ))}
-          </div>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <SettingsIcon className="w-6 h-6 text-blue-500" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Pengaturan</h1>
         </div>
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-xs sm:text-sm"
+        >
+          <span className="hidden sm:inline">← Kembali</span>
+          <span className="sm:hidden">←</span>
+        </Link>
+      </div>
 
-        {/* ===== KONTEN KANAN ===== */}
+      {/* Body: Sidebar + Konten */}
+      <div className="flex flex-col md:flex-row gap-6">
+
+        {/* ===== KONTEN ===== */}
         <div className="flex-1">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 sm:p-6">
+            {/* Tab Navigation (Mobile) */}
+            <div className="flex md:hidden gap-1 mb-4 overflow-x-auto pb-2 border-b border-gray-200 dark:border-slate-700">
+              {menuItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`
+                    px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap
+                    ${activeTab === item.id
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300'
+                    }
+                  `}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+
             {/* === UMUM === */}
             {activeTab === 'general' && (
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Umum</h2>
-                <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Umum</h3>
+                <div className="space-y-3">
+                  {/* Bahasa */}
                   <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-slate-700">
                     <div className="flex items-center gap-3">
                       <Globe className="w-5 h-5 text-gray-500" />
@@ -180,6 +189,42 @@ function Settings() {
                     </div>
                     <span className="text-sm text-gray-500 dark:text-gray-400">Indonesia</span>
                   </div>
+
+                  {/* Tema */}
+                  <div className="py-2 border-b border-gray-100 dark:border-slate-700">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Sun className="w-5 h-5 text-gray-500" />
+                      <span className="text-gray-700 dark:text-gray-300">Tema</span>
+                    </div>
+                    <div className="flex gap-2 pl-8">
+                      <button
+                        onClick={() => { if (theme !== 'light') toggleTheme(); }}
+                        className={`flex-1 flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl border-2 transition text-sm ${
+                          theme === 'light'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                            : 'border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-400'
+                        }`}
+                      >
+                        <Sun className="w-4 h-4" />
+                        <span>Terang</span>
+                        {theme === 'light' && <span className="text-blue-500 text-xs">✓</span>}
+                      </button>
+                      <button
+                        onClick={() => { if (theme !== 'dark') toggleTheme(); }}
+                        className={`flex-1 flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl border-2 transition text-sm ${
+                          theme === 'dark'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                            : 'border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-400'
+                        }`}
+                      >
+                        <Moon className="w-4 h-4" />
+                        <span>Gelap</span>
+                        {theme === 'dark' && <span className="text-blue-500 text-xs">✓</span>}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Notifikasi */}
                   <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-slate-700">
                     <div className="flex items-center gap-3">
                       <Bell className="w-5 h-5 text-gray-500" />
@@ -192,25 +237,25 @@ function Settings() {
                         }
                         saveSettings({ ...settings, enabled: !settings.enabled });
                       }}
-                      className={`w-12 h-6 rounded-full transition ${
+                      className={`w-11 h-6 rounded-full transition ${
                         settings.enabled ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
                       }`}
                     >
                       <div
                         className={`w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${
-                          settings.enabled ? 'translate-x-6' : 'translate-x-0.5'
+                          settings.enabled ? 'translate-x-5' : 'translate-x-0.5'
                         } mt-0.5`}
                       />
                     </button>
                   </div>
                   {settings.enabled && (
-                    <div className="flex items-center gap-3 py-2 pl-10">
+                    <div className="flex items-center gap-3 py-1 pl-8">
                       <Clock className="w-4 h-4 text-gray-500" />
                       <div className="flex items-center gap-2">
                         <select
                           value={settings.hour}
                           onChange={(e) => saveSettings({ ...settings, hour: Number(e.target.value) })}
-                          className="px-3 py-1 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                          className="px-2 py-1 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
                         >
                           {Array.from({ length: 24 }, (_, i) => (
                             <option key={i} value={i}>
@@ -222,7 +267,7 @@ function Settings() {
                         <select
                           value={settings.minute}
                           onChange={(e) => saveSettings({ ...settings, minute: Number(e.target.value) })}
-                          className="px-3 py-1 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                          className="px-2 py-1 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
                         >
                           {[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].map((m) => (
                             <option key={m} value={m}>
@@ -237,55 +282,10 @@ function Settings() {
               </div>
             )}
 
-            {/* === TEMA === */}
-            {activeTab === 'theme' && (
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tema</h2>
-                <div className="space-y-3">
-                  <button
-                    onClick={() => {
-                      if (theme !== 'light') toggleTheme();
-                    }}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border-2 transition ${
-                      theme === 'light'
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Sun className="w-5 h-5 text-yellow-500" />
-                      <span className="text-gray-700 dark:text-gray-300">Terang</span>
-                    </div>
-                    {theme === 'light' && (
-                      <span className="text-blue-500 text-sm font-medium">✓ Aktif</span>
-                    )}
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (theme !== 'dark') toggleTheme();
-                    }}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border-2 transition ${
-                      theme === 'dark'
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Moon className="w-5 h-5 text-indigo-500" />
-                      <span className="text-gray-700 dark:text-gray-300">Gelap</span>
-                    </div>
-                    {theme === 'dark' && (
-                      <span className="text-blue-500 text-sm font-medium">✓ Aktif</span>
-                    )}
-                  </button>
-                </div>
-              </div>
-            )}
-
             {/* === PROFIL === */}
             {activeTab === 'profile' && (
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Profil</h2>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Profil</h3>
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-md flex-shrink-0">
@@ -294,8 +294,7 @@ function Settings() {
                     <div>
                       <p className="text-lg font-medium text-gray-900 dark:text-gray-100">{userName}</p>
                       <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                        <Mail className="w-4 h-4" />
-                        {userEmail}
+                        <Mail className="w-4 h-4" /> {userEmail}
                       </p>
                     </div>
                   </div>
@@ -310,12 +309,12 @@ function Settings() {
             {/* === DATA === */}
             {activeTab === 'data' && (
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Data</h2>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Data</h3>
                 <div className="space-y-3">
                   <button
                     onClick={handleExportAll}
                     disabled={totalEntries === 0}
-                    className="flex items-center gap-3 px-4 py-2.5 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/40 transition disabled:opacity-50 disabled:cursor-not-allowed w-full justify-center"
+                    className="flex items-center gap-2 w-full justify-center px-4 py-2.5 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/40 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                   >
                     <Download className="w-5 h-5" />
                     <span>Ekspor Semua Data ({totalEntries} jurnal)</span>
@@ -323,14 +322,12 @@ function Settings() {
                   <button
                     onClick={handleDeleteAll}
                     disabled={isDeleting || totalEntries === 0}
-                    className="flex items-center gap-3 px-4 py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/40 transition disabled:opacity-50 disabled:cursor-not-allowed w-full justify-center"
+                    className="flex items-center gap-2 w-full justify-center px-4 py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/40 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                   >
                     <Trash2 className="w-5 h-5" />
-                    <span>
-                      {isDeleting ? 'Menghapus...' : `Hapus Semua Jurnal (${totalEntries})`}
-                    </span>
+                    <span>{isDeleting ? 'Menghapus...' : `Hapus Semua Jurnal (${totalEntries})`}</span>
                   </button>
-                  <p className="text-xs text-red-500 dark:text-red-400">
+                  <p className="text-xs text-red-500 dark:text-red-400 text-center">
                     ⚠️ Tindakan ini tidak bisa dibatalkan.
                   </p>
                 </div>
@@ -340,16 +337,14 @@ function Settings() {
             {/* === TENTANG === */}
             {activeTab === 'about' && (
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tentang</h2>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tentang</h3>
                 <div className="space-y-3 text-gray-700 dark:text-gray-300">
-                  <p>
-                    <strong>Journal App</strong> — Aplikasi jurnal harian modern.
+                  <p><strong>Journal App</strong> — Aplikasi jurnal harian modern.</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Dibuat oleh Feri.
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Dibuat dengan ❤️ menggunakan React, Vite, TypeScript, dan Tailwind CSS.
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Versi: <span className="font-mono">1.0.0</span>
+                    Versi: <span className="font-mono">1.5.0</span>
                   </p>
                 </div>
               </div>
@@ -358,13 +353,13 @@ function Settings() {
         </div>
       </div>
 
-      {/* ===== CONFIRM MODAL ===== */}
+      {/* Confirm Modal */}
       <ConfirmModal
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={confirmDeleteAll}
         title="Hapus Semua Jurnal?"
-        message={`⚠️ Kamu akan menghapus SEMUA ${totalEntries} jurnal. Tindakan ini TIDAK BISA DIBATALKAN!`}
+        message={`Kamu akan menghapus SEMUA ${totalEntries} jurnal. Tindakan ini TIDAK BISA DIBATALKAN!`}
         confirmText="Ya, Hapus Semua"
         cancelText="Batal"
         type="danger"

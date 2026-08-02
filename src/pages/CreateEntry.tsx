@@ -141,21 +141,21 @@ function CreateEntry() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <PenSquare className="w-6 h-6 text-blue-500" />
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">Jurnal Baru</h1>
-          </div>
-          <Link 
-            to="/"
-            className="inline-flex items-center gap-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-sm"
-          >
-            <span className="hidden sm:inline">← Kembali ke Detail</span>
-            <span className="sm:hidden">← Kembali</span>
-          </Link>
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <div className="flex items-center gap-2">
+          <PenSquare className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">Jurnal Baru</h1>
         </div>
+        <Link 
+          to="/"
+          className="inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-xs sm:text-sm"
+        >
+          <span className="hidden sm:inline">← Kembali</span>
+          <span className="sm:hidden">←</span>
+        </Link>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         {/* Judul */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
@@ -270,9 +270,9 @@ function CreateEntry() {
               className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
             <button
-              type="button"
-              onClick={handleAddTag}
-              className="px-5 py-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded-xl transition text-sm font-medium whitespace-nowrap"
+              type="submit"
+              disabled={loading || uploading || !content}
+              className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 text-sm sm:text-base shadow-md shadow-blue-500/20"
             >
               Tambah
             </button>

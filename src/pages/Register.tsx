@@ -77,10 +77,10 @@ function Register() {
               {/* Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-slate-700 flex-shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                  <div className="p-2 from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/25 rounded-lg">
                     <img src="/public/logo.png" alt="Journal App" className="w-10 h-10" />
                   </div>
-                  <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  <h2 className="text-lg pt-5 font-bold text-gray-900 dark:text-gray-100">
                     Tentang Journal App
                   </h2>
                 </div>
@@ -95,8 +95,8 @@ function Register() {
               {/* Body dengan Tab */}
               <div className="flex flex-col flex-1 overflow-hidden">
                 {/* Tab Navigation */}
-                <div className="flex gap-0.5 sm:gap-1 px-3 sm:px-6 pt-3 sm:pt-4 border-b border-gray-200 dark:border-slate-700 overflow-x-auto">
-                  {['Tentang', 'Fitur', 'Teknologi', 'Kredit'].map((tab) => (
+                <div className="flex justify-center gap-0.5 sm:gap-1 px-3 sm:px-6 pt-3 sm:pt-4 border-b border-gray-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
+                  {['Tentang', 'Fitur', 'Teknologi', 'Kredit', 'Sosial Media'].map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setActiveAboutTab(tab)}
@@ -118,19 +118,18 @@ function Register() {
                   {/* Tab: Tentang */}
                   {activeAboutTab === 'Tentang' && (
                     <div className="space-y-4">
-                      <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        <strong className="text-gray-900 dark:text-gray-100">Journal App</strong> adalah aplikasi jurnal harian modern yang membantu kamu 
-                        merekam pengalaman, perasaan, dan momen berharga setiap hari.
+                      <p className="text-gray-400 dark:text-gray-400leading-relaxed">
+                        <strong className="text-white">Journal App</strong> adalah aplikasi jurnal harian modern yang pertama kali saya buat. Menulis jurnal harian dengan fitur Mood Emoji Tracker, Mood Emoji Statistik, Kalender dan Arsip. 
+                        Mencoba teknologi baru dan mengenal ekosistem modern untuk membangun aplikasi web yang cepat, ringan, dan responsif.
                       </p>
-                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                        <p className="text-sm text-blue-700 dark:text-blue-300">
-                          💡 "Catat setiap momen, kenang selamanya."
+                      <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800/50">
+                        <p className="text-sm text-yellow-700 dark:text-yellow-300 flex items-start gap-2">
+                          <span className="text-lg">⚠️</span>
+                          <span>
+                            <strong>Penting:</strong> Aplikasi ini masih dalam tahap pengembangan dan masih dalam percobaan di Android.
+                          </span>
                         </p>
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Dibuat untuk memudahkan kamu mendokumentasikan kegiatan harian, 
-                        sekaligus melacak perubahan mood dan perasaan dari waktu ke waktu.
-                      </p>
                     </div>
                   )}
 
@@ -141,7 +140,7 @@ function Register() {
                         <PenSquare className="w-5 h-5 text-blue-500" />
                         <div>
                           <p className="font-medium text-gray-900 dark:text-gray-100">Tulis Jurnal</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Catat pengalaman dengan mood, lagu, dan foto</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Catat harian dengan mood, lagu, dan foto</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
@@ -169,7 +168,7 @@ function Register() {
                         <Camera className="w-5 h-5 text-pink-500" />
                         <div>
                           <p className="font-medium text-gray-900 dark:text-gray-100">Upload Foto</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Dokumentasi dengan foto</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Tambahkan foto ke jurnal harian</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
@@ -185,48 +184,33 @@ function Register() {
                   {/* Tab: Teknologi */}
                   {activeAboutTab === 'Teknologi' && (
                     <div className="space-y-4">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Aplikasi ini dibangun dengan teknologi modern:
+                      <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                        Dibangun dengan teknologi modern:
                       </p>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-center">
-                          <p className="font-medium text-gray-900 dark:text-gray-100">React</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">UI Library</p>
-                        </div>
-                        <div className="p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-center">
-                          <p className="font-medium text-gray-900 dark:text-gray-100">TypeScript</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">JavaScript dengan tipe</p>
-                        </div>
-                        <div className="p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-center">
-                          <p className="font-medium text-gray-900 dark:text-gray-100">Vite</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">Build Tool</p>
-                        </div>
-                        <div className="p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-center">
-                          <p className="font-medium text-gray-900 dark:text-gray-100">Tailwind CSS</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">Styling</p>
-                        </div>
-                        <div className="p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-center">
-                          <p className="font-medium text-gray-900 dark:text-gray-100">Supabase</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">Backend & Database</p>
-                        </div>
-                        <div className="p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-center">
-                          <p className="font-medium text-gray-900 dark:text-gray-100">Lucide Icons</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">Icon Library</p>
-                        </div>
+                      <div className="flex justify-center">
+                        <img
+                          src="https://skillicons.dev/icons?i=react,ts,vite,tailwind,supabase,git,vercel,figma&theme=dark"
+                          alt="Tech Stack"
+                          className="w-full max-w-md rounded-xl"
+                        />
                       </div>
+                      <p className="text-xs text-gray-400 dark:text-gray-400 text-center">
+                        React • TypeScript • Vite • Tailwind CSS • Supabase • Git • Vercel • Figma
+                      </p>
                     </div>
                   )}
+
                   {/* Tab: Kredit */}
                   {activeAboutTab === 'Kredit' && (
                     <div className="space-y-4 text-center">
-                      <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/25 mb-2">
+                      <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-lg shadow-emerald-500/25 mb-2">
                         <img src="/public/logo.png" alt="Journal App" className="w-10 h-10" />
                       </div>
                       <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Journal App</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Versi 1.0.0</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Versi 1.5.0</p>
                       <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          dibuat dengan ❤️ oleh <strong className="text-gray-900 dark:text-gray-100">Feri</strong>
+                          dibuat oleh <strong className="text-gray-900 dark:text-gray-100">Feri</strong>
                         </p>
                         <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                           {new Date().getFullYear()} • All Rights Reserved
@@ -234,6 +218,26 @@ function Register() {
                       </div>
                     </div>
                   )}
+
+                  {/* Tab: Sosial Media */}
+                    {activeAboutTab === 'Sosial Media' && (
+                      <div className="space-y-4">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                          Hubungi Saya
+                        </p>
+                        <div className="flex justify-center gap-4 flex-wrap">
+                          <a href="https://www.instagram.com/imnotferrriii" target="_blank" rel="noopener noreferrer">
+                            <img src="https://skillicons.dev/icons?i=instagram" alt="Instagram" className="w-12 h-12" />
+                          </a>
+                          <a href="https://github.com/FerrCodes" target="_blank" rel="noopener noreferrer">
+                            <img src="https://skillicons.dev/icons?i=github" alt="GitHub" className="w-12 h-12" />
+                          </a>
+                        </div>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
+                          Klik icon untuk mengunjungi profil kami 🚀
+                        </p>
+                      </div>
+                    )}
                 </div>
               </div>
             </div>

@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../services/supabase';
 import { Link } from 'react-router-dom';
 import type { JournalEntry } from '../types/journal';
 import { MOOD_OPTIONS } from '../types/journal';
 import { toast } from 'react-toastify';
-import { PenSquare, Search, Filter, X, BarChart3, Calendar, Smile, BookOpen, Star, Cloud, Music } from 'lucide-react';
+import { PenSquare, Search, Filter, X, BarChart3, Calendar, Smile, BookOpen, Star, Cloud, Music, ChevronDown, Archive } from 'lucide-react';
 
 function Dashboard() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -15,6 +15,8 @@ function Dashboard() {
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const fetchEntries = async () => {
     setLoading(true);
@@ -74,6 +76,16 @@ function Dashboard() {
     const found = MOOD_OPTIONS.find((m) => m.value === mood);
     return found ? found.emoji : '😐';
   };
+
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setIsDropdownOpen(false);
+    }
+  };
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => document.removeEventListener('mousedown', handleClickOutside);
+}, []);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -135,7 +147,7 @@ function Dashboard() {
       {/* Header */}
     <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
       <div className="flex-1 min-w-0">
-        <h1 className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2 truncate">
+        <h1 className="text-3xl sm:text-xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2 truncate">
           <BookOpen className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 text-blue-500 flex-shrink-0" />
           <span className="truncate">Daftar Jurnal</span>
         </h1>
@@ -143,25 +155,63 @@ function Dashboard() {
           {totalEntries} entri • Terakhir: {latestMood ? getMoodEmoji(latestMood) : 'Belum ada'}
         </p>
       </div>
+        <div className="flex items-center gap-2">
+        {/* Tombol Utama + Dropdown */}
+        <div className="relative" ref={dropdownRef}>
         <button
-            onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition flex items-center gap-1.5 text-sm ${
-              showFavoritesOnly
-                ? 'bg-yellow-500 text-white'
-                : 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-slate-500'
-            }`}
-          >
-            <Star className={`w-4 h-4 ${showFavoritesOnly ? 'fill-white' : ''}`} />
-            <span className="hidden xs:inline">Favorit</span>
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsDropdownOpen(!isDropdownOpen);
+          }}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl transition flex items-center gap-1 sm:gap-2 text-sm sm:text-base flex-shrink-0"
+        >
+          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
         </button>
-          <Link
-            to="/create"
-            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl transition flex items-center gap-1 sm:gap-2 text-sm sm:text-base flex-shrink-0"
-          >
-              <PenSquare className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">Tulis Baru</span>
-              <span className="xs:hidden">Tambah</span>
-          </Link>
+
+            {/* Dropdown Menu */}
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden z-10">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowFavoritesOnly(!showFavoritesOnly);
+                    setIsDropdownOpen(false);
+                  }}
+                  className={`flex items-center gap-3 w-full px-4 py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-slate-700 transition ${
+                    showFavoritesOnly
+                      ? 'text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20'
+                      : 'text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  <Star className={`w-4 h-4 ${showFavoritesOnly ? 'fill-yellow-500' : ''}`} />
+                  {showFavoritesOnly ? 'Tampilkan Semua' : 'Tampilkan Favorit'}
+                </button>
+                <Link
+                  to="/create"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsDropdownOpen(false);
+                  }}
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition"
+                >
+                  <PenSquare className="w-4 h-4 text-blue-500" />
+                  Tambah Jurnal Baru
+                </Link>
+                <Link
+                  to="/archive"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsDropdownOpen(false);
+                  }}
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition"
+                >
+                  <Archive className="w-4 h-4 text-gray-500" />
+                  Arsip
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -292,13 +342,8 @@ function Dashboard() {
             {entries.length === 0 ? 'Belum ada jurnal' : 'Tidak ada hasil yang cocok'}
           </p>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            {entries.length === 0 ? 'Mulai tulis jurnal pertamamu sekarang!' : 'Coba ubah kata kunci atau filter yang lain.'}
+            {entries.length === 0 ? 'Buat jurnal pertamamu sekarang!' : 'Coba ubah kata kunci atau filter yang lain.'}
           </p>
-          {entries.length === 0 && (
-            <Link to="/create" className="inline-block mt-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-5 py-2.5 rounded-xl transition">
-              Tulis Jurnal
-            </Link>
-          )}
         </div>
         ) : (
         <div className="space-y-3 sm:space-y-4">

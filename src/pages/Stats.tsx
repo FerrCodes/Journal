@@ -122,19 +122,19 @@ function Stats() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-blue-500" />
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">Statistik</h1>
-          </div>
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-sm"
-          >
-            <span className="hidden sm:inline">← Kembali ke Dashboard</span>
-            <span className="sm:hidden">← Kembali</span>
-          </Link>
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <div className="flex items-center gap-2">
+          <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
+          <h1 className="text-3xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">Statistik</h1>
         </div>
+        <Link 
+          to="/" 
+          className="inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-xs sm:text-sm"
+        >
+          <span className="hidden sm:inline">← Kembali</span>
+          <span className="sm:hidden">←</span>
+        </Link>
+      </div>
 
       {entries.length === 0 ? (
         <div className="text-center py-10 bg-white dark:bg-slate-800 rounded-xl shadow-md">
@@ -144,9 +144,9 @@ function Stats() {
       ) : (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md text-center">
-              <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{entries.length}</p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Total Jurnal</p>
+            <div className="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-xl shadow-md text-center">
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{entries.length}</p>
+              <p className="text-gray-600 dark:text-gray-400 text-[10px] sm:text-sm">Total Jurnal</p>
             </div>
             <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md text-center">
               <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
@@ -177,7 +177,7 @@ function Stats() {
           {lineData.length >= 2 && (
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-md mb-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tren Mood Harian</h3>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={lineData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" strokeOpacity={0.5} />
                   <XAxis dataKey="tanggal" stroke="#9ca3af" tick={{ fill: '#9ca3af' }} />
@@ -198,7 +198,7 @@ function Stats() {
           )}
 
           {barData.length > 0 && (
-            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-md mb-6">
+            <div className="bg-white dark:bg-slate-800 p-3 sm:p-5 rounded-xl shadow-md mb-4 sm:mb-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Frekuensi Mood</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={barData}>
@@ -223,7 +223,7 @@ function Stats() {
           {barData.length > 0 && (
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-md">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Distribusi Mood</h3>
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie
                     data={barData}
@@ -234,8 +234,9 @@ function Stats() {
                     outerRadius={80}
                     label={({ name }) => {
                       const item = barData.find(d => d.label === name);
-                      return item ? `${item.emoji} ${item.count}` : name;
+                      return item ? `${item.emoji}` : name;
                     }}
+                    labelLine={true}
                   >
                     {barData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[entry.mood - 1] || '#3b82f6'} />

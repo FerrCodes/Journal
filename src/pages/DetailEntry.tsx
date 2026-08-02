@@ -277,7 +277,7 @@ const confirmDeleteAllImages = async () => {
     }
 
     setImages([]);
-    toast.success('✅ Semua foto berhasil dihapus!');
+    toast.success('Semua foto berhasil dihapus!');
   } catch (err: unknown) {
     toast.error('❌ Gagal hapus foto: ' + (err as Error).message);
   } finally {
@@ -332,7 +332,7 @@ const confirmDeleteAllImages = async () => {
       <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <FileText className="w-6 h-6 text-blue-500" />
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">Detail Jurnal</h1>
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">Detail Jurnal</h1>
           </div>
           <Link 
             to="/"

@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { MOOD_OPTIONS } from '../types/journal';
 import type { MoodValue } from '../types/journal';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
-import { PenSquare, Save, Tag, Loader2, ArrowLeft } from 'lucide-react';
-import { searchSongs } from '../services/lastfm';
+import { PenSquare, Save, Tag, Loader2, Image, Upload, X, Music, Cloud } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
 
 function CreateEntry() {
   const navigate = useNavigate();
@@ -21,11 +20,9 @@ function CreateEntry() {
   const [weather, setWeather] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
-
-  // State untuk pencarian lagu
-  const [searchResults, setSearchResults] = useState<Array<{ id: string; title: string; artist: string; url: string }>>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [showResults, setShowResults] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +33,7 @@ function CreateEntry() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User tidak ditemukan.');
 
-      const { error: insertError } = await supabase
+      const { data: entryData, error: insertError } = await supabase
         .from('entries')
         .insert({
           user_id: user.id,
@@ -48,9 +45,28 @@ function CreateEntry() {
           song_url: songUrl || null,
           weather: weather || null,
           tags: tags,
-        });
+        })
+        .select()
+        .single();
 
       if (insertError) throw insertError;
+
+      if (files.length > 0 && entryData) {
+        setUploading(true);
+        const imageUrls = await uploadImages(entryData.id);
+        
+        const imageInserts = imageUrls.map((url) => ({
+          entry_id: entryData.id,
+          image_url: url,
+        }));
+
+        const { error: imageError } = await supabase
+          .from('entry_images')
+          .insert(imageInserts);
+
+        if (imageError) throw imageError;
+      }
+
       toast.success('✅ Jurnal berhasil disimpan!');
       navigate('/');
     } catch (err: unknown) {
@@ -58,6 +74,7 @@ function CreateEntry() {
       toast.error('❌ Gagal menyimpan jurnal: ' + (err as Error).message);
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -80,66 +97,82 @@ function CreateEntry() {
     }
   };
 
-  // Fungsi untuk pencarian lagu
-  const handleSearchSong = async (query: string) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      setShowResults(false);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length + files.length > 3) {
+      toast.warning('⚠️ Maksimal 3 foto per jurnal.');
       return;
     }
-
-    setIsSearching(true);
-    try {
-      const results = await searchSongs(query);
-      setSearchResults(results);
-      setShowResults(results.length > 0);
-    } catch (error) {
-      console.error('Gagal mencari lagu:', error);
-    } finally {
-      setIsSearching(false);
-    }
+    setFiles([...files, ...selectedFiles]);
+    const previews = selectedFiles.map((file) => URL.createObjectURL(file));
+    setImagePreviews([...imagePreviews, ...previews]);
   };
 
-  // Fungsi untuk memilih lagu dari hasil pencarian
-  const selectSong = (song: { id: string; title: string; artist: string; url: string }) => {
-    setSongTitle(song.title);
-    setSongArtist(song.artist);
-    setSongUrl(song.url);
-    setSearchResults([]);
-    setShowResults(false);
+  const removeFile = (index: number) => {
+    setFiles(files.filter((_, i) => i !== index));
+    setImagePreviews(imagePreviews.filter((_, i) => i !== index));
+  };
+
+  const uploadImages = async (entryId: string): Promise<string[]> => {
+    const uploadedUrls: string[] = [];
+    for (const file of files) {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${entryId}/${uuidv4()}.${fileExt}`;
+      const filePath = fileName;
+
+      const { error: uploadError } = await supabase.storage
+        .from('entry-images')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('entry-images')
+        .getPublicUrl(filePath);
+
+      uploadedUrls.push(urlData.publicUrl);
+    }
+    return uploadedUrls;
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex justify-between items-center mb-04">
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-          <PenSquare className="w-6 h-6" />
-          Tulis Jurnal Baru
-        </h2>
-        <Link
-          to="/"
-          className="bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Kembali
-        </Link>
-      </div>
-        
+    <div className="max-w-3xl mx-auto px-4 py-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <PenSquare className="w-6 h-6 text-blue-500" />
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">Jurnal Baru</h1>
+          </div>
+          <Link 
+            to="/"
+            className="inline-flex items-center gap-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-sm"
+          >
+            <span className="hidden sm:inline">← Kembali ke Detail</span>
+            <span className="sm:hidden">← Kembali</span>
+          </Link>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Judul */}
         <div>
-          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-300 text-sm sm:text-base">Judul (Opsional)</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+            Judul <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
+          </label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Judul hari ini..."
-            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
-            />
+            placeholder="Masukkan judul jurnal..."
+            className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
+          />
         </div>
 
+        {/* Isi Jurnal */}
         <div>
-          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
             Isi Jurnal <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -147,13 +180,14 @@ function CreateEntry() {
             onChange={(e) => setContent(e.target.value)}
             required
             rows={6}
-            placeholder="Ceritakan hari ini..."
-            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none resize-y text-sm sm:text-base"
+            placeholder="Ceritakan pengalaman hari ini..."
+            className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-y text-sm sm:text-base"
           />
         </div>
 
+        {/* Mood */}
         <div>
-          <label className="block font-medium mb-2 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Mood Hari Ini <span className="text-red-500">*</span>
           </label>
           <div className="flex flex-wrap gap-2">
@@ -162,10 +196,10 @@ function CreateEntry() {
                 key={option.value}
                 type="button"
                 onClick={() => setMood(option.value)}
-                className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg transition text-xs sm:text-sm ${
+                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition text-xs sm:text-sm font-medium ${
                   mood === option.value
-                    ? 'border-2 border-blue-500 bg-blue-50 dark:bg-blue-900/30'
-                    : 'border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700'
+                    ? 'bg-blue-500 text-white shadow-md shadow-blue-500/25'
+                    : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600'
                 }`}
               >
                 {option.emoji} {option.label}
@@ -174,84 +208,58 @@ function CreateEntry() {
           </div>
         </div>
 
-        <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
-          <h3 className="text-base font-medium mb-3 text-gray-700 dark:text-gray-300">Lagu Favorit Hari Ini (Opsional)</h3>
+        {/* Lagu Favorit */}
+        <div className="border-t border-gray-200 dark:border-slate-700 pt-6">
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-1">
+            <Music className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            Lagu Favorit <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
+          </label>
           <div className="space-y-3">
-            {/* Input Judul Lagu dengan Pencarian */}
-            <div className="relative">
-              <input
-                type="text"
-                value={songTitle}
-                onChange={(e) => {
-                  setSongTitle(e.target.value);
-                  handleSearchSong(e.target.value);
-                }}
-                placeholder="Judul Lagu"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
-              />
-              {isSearching && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
-                </div>
-              )}
-
-              {/* Hasil Pencarian */}
-              {showResults && searchResults.length > 0 && (
-                <div className="absolute z-10 mt-1 w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                  {searchResults.map((song) => (
-                    <button
-                      key={song.id}
-                      onClick={() => selectSong(song)}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-slate-700 transition flex items-center gap-3 border-b border-gray-100 dark:border-slate-700 last:border-0"
-                    >
-                      <div className="w-10 h-10 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
-                        <span className="text-lg">🎵</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{song.title}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{song.artist}</p>
-                      </div>
-                      <span className="text-xs text-blue-500 dark:text-blue-400">Pilih</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
+            <input
+              type="text"
+              value={songTitle}
+              onChange={(e) => setSongTitle(e.target.value)}
+              placeholder="Judul lagu..."
+              className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
+            />
             <input
               type="text"
               value={songArtist}
               onChange={(e) => setSongArtist(e.target.value)}
-              placeholder="Artis"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+              placeholder="Nama artis..."
+              className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
             <input
               type="url"
               value={songUrl}
               onChange={(e) => setSongUrl(e.target.value)}
-              placeholder="Link Spotify/YouTube"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm sm:text-base"
+              placeholder="Link Spotify / YouTube..."
+              className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
           </div>
         </div>
 
+        {/* Cuaca */}
         <div>
-          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-300 text-sm sm:text-base">Cuaca (Opsional)</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center gap-1">
+            <Cloud className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            Cuaca <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
+          </label>
           <input
             type="text"
             value={weather}
             onChange={(e) => setWeather(e.target.value)}
-            placeholder="Contoh: Cerah, Hujan, Mendung"
-            className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none"
+            placeholder="Cerah, Hujan, Mendung..."
+            className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
           />
         </div>
 
         {/* Tags */}
-        <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
-          <h3 className="text-base font-medium mb-3 text-gray-700 dark:text-gray-300 flex items-center gap-2">
-            <Tag className="w-4 h-4" />
-            Tags (Opsional)
-          </h3>
+        <div>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center gap-1">
+            <Tag className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            Tags <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
+          </label>
           <div className="flex gap-2">
             <input
               type="text"
@@ -259,12 +267,12 @@ function CreateEntry() {
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Ketik tag, lalu Enter..."
-              className="flex-1 px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
             <button
               type="button"
               onClick={handleAddTag}
-              className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition"
+              className="px-5 py-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded-xl transition text-sm font-medium whitespace-nowrap"
             >
               Tambah
             </button>
@@ -290,19 +298,67 @@ function CreateEntry() {
           )}
         </div>
 
+        {/* Upload Foto */}
+        <div className="border-t border-gray-200 dark:border-slate-700 pt-6">
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-1">
+            <Image className="w-4 h-4" />
+            Foto <span className="text-gray-400 dark:text-gray-500">(Opsional, maksimal 3)</span>
+          </label>
+
+          {imagePreviews.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {imagePreviews.map((preview, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={preview}
+                    alt={`Preview ${index + 1}`}
+                    className="w-20 h-20 object-cover rounded-lg border border-gray-200 dark:border-slate-600"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeFile(index)}
+                    className="absolute -top-1 -right-1 p-0.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {files.length < 3 && (
+            <label className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-xl transition cursor-pointer text-sm font-medium">
+              <Upload className="w-4 h-4" />
+              Pilih Foto
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </label>
+          )}
+        </div>
+
+        {/* Error */}
         {error && (
-          <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-lg text-red-700 dark:text-red-300">
+          <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-xl text-red-700 dark:text-red-300 text-sm">
             {error}
           </div>
         )}
 
+        {/* Submit */}
         <button
           type="submit"
-          disabled={loading || !content}
-          className="w-full py-2.5 sm:py-3 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition flex items-center justify-center gap-2 text-sm sm:text-base"
+          disabled={loading || uploading || !content}
+          className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 text-sm sm:text-base shadow-md shadow-blue-500/20"
         >
-          {loading ? (
-            'Menyimpan...'
+          {loading || uploading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Menyimpan...
+            </>
           ) : (
             <>
               <Save className="w-4 h-4" />

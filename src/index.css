@@ -162,3 +162,12 @@ html.dark ::-webkit-scrollbar-thumb {
 .animate-slideUp {
   animation: slideUp 0.3s ease-out forwards;
 }
+
+/* Sembunyikan scrollbar di semua browser */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

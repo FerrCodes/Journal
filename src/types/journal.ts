@@ -10,6 +10,16 @@ export interface JournalEntry {
   tags: string[];
   created_at: string;
   custom_date?: string;
+  is_favorite?: boolean;
+  is_archived?: boolean;
+  images?: EntryImage[];
+}
+
+export interface EntryImage {
+  id: string;
+  entry_id: string;
+  image_url: string;
+  created_at: string;
 }
 
 export const MOOD_OPTIONS = [

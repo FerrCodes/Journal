@@ -14,10 +14,11 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
-  BookOpen,
   Settings,
   ChevronUp,
   ChevronDown,
+  Calendar,
+  Archive
 } from 'lucide-react';
 
 function Layout() {
@@ -31,7 +32,7 @@ function Layout() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    toast.success('👋 Sampai jumpa!');
+    toast.success('Berhasil Logout!');
     navigate('/login');
   };
 
@@ -71,6 +72,8 @@ function Layout() {
     { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/create', icon: PenSquare, label: 'Tambah' },
     { to: '/stats', icon: BarChart3, label: 'Statistik' },
+    { to: '/calendar', icon: Calendar, label: 'Kalender' },
+    { to: '/archive', icon: Archive, label: 'Arsip' },
   ];
 
   // Ambil inisial untuk avatar
@@ -110,7 +113,7 @@ function Layout() {
             <span className="text-2xl flex-shrink-0"></span>
             {!isCollapsed && (
               <span className="text-xl font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap flex items-center gap-1">
-                <BookOpen className="w-5 h-5" />
+                <img src="/public/logo.png" alt="Journal App" className="w-10 h-10" />
                 Journal
               </span>
             )}

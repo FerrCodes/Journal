@@ -8,6 +8,8 @@ import CreateEntry from './pages/CreateEntry';
 import DetailEntry from './pages/DetailEntry';
 import EditEntry from './pages/EditEntry';
 import Stats from './pages/Stats';
+import Calendar from './pages/Calendar';
+import Archive from './pages/Archive';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
@@ -31,6 +33,8 @@ return (
         <Route path="entry/:id" element={<DetailEntry />} />
         <Route path="edit/:id" element={<EditEntry />} />
         <Route path="stats" element={<Stats />} />
+        <Route path="calendar" element={<Calendar />} />
+        <Route path="archive" element={<Archive />} />
       </Route>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />

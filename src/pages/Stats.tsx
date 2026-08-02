@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { supabase } from '../services/supabase';
 import { Link } from 'react-router-dom';
 import { Skeleton } from '../components/Skeleton';
-import { BarChart3, ArrowLeft } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -122,19 +122,19 @@ function Stats() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-5">
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-          <BarChart3 className="w-6 h-6" />
-          Statistik Mood
-        </h2>
-        <Link
-          to="/"
-          className="bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Kembali
-        </Link>
-      </div>
+      <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-blue-500" />
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">Statistik</h1>
+          </div>
+          <Link 
+            to="/" 
+            className="inline-flex items-center gap-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-sm"
+          >
+            <span className="hidden sm:inline">← Kembali ke Dashboard</span>
+            <span className="sm:hidden">← Kembali</span>
+          </Link>
+        </div>
 
       {entries.length === 0 ? (
         <div className="text-center py-10 bg-white dark:bg-slate-800 rounded-xl shadow-md">

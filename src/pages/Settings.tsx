@@ -64,7 +64,7 @@ function Settings() {
 
   const handleDeleteAll = () => {
     if (totalEntries === 0) {
-      toast.info('📭 Belum ada jurnal untuk dihapus.');
+      toast.info('Belum ada jurnal untuk dihapus.');
       return;
     }
     setIsConfirmOpen(true);
@@ -84,7 +84,7 @@ function Settings() {
       if (error) throw error;
 
       setTotalEntries(0);
-      toast.success('🗑️ Semua jurnal berhasil dihapus!');
+      toast.success('Semua jurnal berhasil dihapus!');
     } catch (err: unknown) {
       toast.error('❌ Gagal menghapus: ' + (err as Error).message);
     } finally {
@@ -110,7 +110,7 @@ function Settings() {
       }
 
       await exportAllEntries(entries);
-      toast.success('✅ Data berhasil diekspor!');
+      toast.success('Data berhasil diekspor!');
     } catch (err: unknown) {
       toast.error('❌ Gagal ekspor data: ' + (err as Error).message);
     }

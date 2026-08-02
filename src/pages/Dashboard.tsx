@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import type { JournalEntry } from '../types/journal';
 import { MOOD_OPTIONS } from '../types/journal';
 import { toast } from 'react-toastify';
-import { PenSquare, Search, Filter, X, BarChart3, Calendar, Smile, BookOpen } from 'lucide-react';
+import { PenSquare, Search, Filter, X, BarChart3, Calendar, Smile, BookOpen, Star, Cloud, Music } from 'lucide-react';
 
 function Dashboard() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -14,6 +14,7 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
   const fetchEntries = async () => {
     setLoading(true);
@@ -27,6 +28,7 @@ function Dashboard() {
         .from('entries')
         .select('*')
         .eq('user_id', user.id)
+        .eq('is_archived', false)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -61,9 +63,12 @@ function Dashboard() {
     if (selectedTag !== null) {
       result = result.filter((entry) => entry.tags?.includes(selectedTag));
     }
+    if (showFavoritesOnly) {
+    result = result.filter((entry) => entry.is_favorite === true);
+    }
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setFilteredEntries(result);
-  }, [searchQuery, selectedMood, selectedTag, entries]);
+    }, [searchQuery, selectedMood, selectedTag, showFavoritesOnly, entries]);
 
   const getMoodEmoji = (mood: number) => {
     const found = MOOD_OPTIONS.find((m) => m.value === mood);
@@ -128,9 +133,9 @@ function Dashboard() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
       <div className="flex-1 min-w-0">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2 truncate">
+        <h1 className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2 truncate">
           <BookOpen className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 text-blue-500 flex-shrink-0" />
           <span className="truncate">Daftar Jurnal</span>
         </h1>
@@ -138,20 +143,31 @@ function Dashboard() {
           {totalEntries} entri • Terakhir: {latestMood ? getMoodEmoji(latestMood) : 'Belum ada'}
         </p>
       </div>
-      <Link
-        to="/create"
-        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl transition flex items-center gap-1 sm:gap-2 text-sm sm:text-base flex-shrink-0"
-      >
-        <PenSquare className="w-3 h-3 sm:w-4 sm:h-4" />
-        <span className="hidden xs:inline">Tulis Baru</span>
-        <span className="xs:hidden">Tambah</span>
-      </Link>
-    </div>
+        <button
+            onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl transition flex items-center gap-1.5 text-sm ${
+              showFavoritesOnly
+                ? 'bg-yellow-500 text-white'
+                : 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-slate-500'
+            }`}
+          >
+            <Star className={`w-4 h-4 ${showFavoritesOnly ? 'fill-white' : ''}`} />
+            <span className="hidden xs:inline">Favorit</span>
+        </button>
+          <Link
+            to="/create"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl transition flex items-center gap-1 sm:gap-2 text-sm sm:text-base flex-shrink-0"
+          >
+              <PenSquare className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline">Tulis Baru</span>
+              <span className="xs:hidden">Tambah</span>
+          </Link>
+      </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
-  {totalEntries > 0 && (
-    <>
+      {totalEntries > 0 && (
+        <>
       {/* Total Jurnal */}
       <div className="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100 dark:border-slate-700">
         <div className="flex items-center gap-2 sm:gap-3">
@@ -206,12 +222,12 @@ function Dashboard() {
               {entries.filter(e => e.tags && e.tags.length > 0).length}
             </p>
             <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">Dengan Tag</p>
-          </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
-      </div>
-    </>
-  )}
-</div>
 
       {/* Search & Filter */}
       <div className="bg-white dark:bg-slate-800 p-3 sm:p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 mb-6">
@@ -263,7 +279,7 @@ function Dashboard() {
             </button>
           )}
         </div>
-        <div className="mt-2 sm:mt-3 text-center sm:text-center text-gray-500 dark:text-gray-400">
+        <div className="mt-2 sm:mt-3 text-center sm:text-center text-xs text-gray-500 dark:text-gray-400">
           Menampilkan {filteredEntries.length} dari {entries.length} jurnal
         </div>
       </div>
@@ -271,7 +287,7 @@ function Dashboard() {
       {/* List Jurnal */}
       {filteredEntries.length === 0 ? (
         <div className="text-center py-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
-          <div className="text-6xl mb-4">📭</div>
+          <div className="text-6xl mb-4"></div>
           <p className="text-lg text-gray-700 dark:text-gray-300">
             {entries.length === 0 ? 'Belum ada jurnal' : 'Tidak ada hasil yang cocok'}
           </p>
@@ -295,6 +311,9 @@ function Dashboard() {
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
+                    {entry.is_favorite && (
+                      <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+                    )}
                     <h3 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
                       {entry.title || 'Tanpa Judul'}
                     </h3>
@@ -308,15 +327,26 @@ function Dashboard() {
                   <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm line-clamp-2 mb-1">
                     {entry.content}
                   </p>
-                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-3 text-[10px] sm:text-xs text-gray-400 dark:text-gray-500">
-                    <span>📅 {formatDate(entry.created_at)}</span>
+                  {/* Garis Pemisah */}
+                <div className="border-t-2 border-gray-300 dark:border-slate-600 my-2" />
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-3 text-[10px] sm:text-xs text-gray-400 dark:text-white/70">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                      {formatDate(entry.created_at)}
+                    </span>
                     {entry.song_title && (
                       <span className="flex items-center gap-0.5 sm:gap-1 truncate max-w-[120px] sm:max-w-[200px]">
-                        🎵 {entry.song_title}
+                        <Music className="w-3 h-3 sm:w-4 sm:h-4" />
+                        {entry.song_title}
                         {entry.song_artist && ` - ${entry.song_artist}`}
                       </span>
                     )}
-                    {entry.weather && <span>☁️ {entry.weather}</span>}
+                    {entry.weather && (
+                      <span className="flex items-center gap-1">
+                        <Cloud className="w-3 h-3 sm:w-4 sm:h-4" />
+                        {entry.weather}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <span className="text-gray-300 dark:text-gray-600 text-sm hidden sm:block">→</span>

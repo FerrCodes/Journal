@@ -4,6 +4,8 @@ import { useTheme } from '../context/ThemeContext';
 import { toast } from 'sonner'
 import { useState, useRef, useEffect } from 'react';
 import SettingsModal from './SettingsModal';
+import { exportAllEntries } from '../utils/exportPDF';
+import HelpModal from './HelpModal'; 
 import {
   LayoutDashboard,
   PenSquare,
@@ -18,7 +20,9 @@ import {
   ChevronDown,
   Calendar,
   Archive,
-  Activity
+  Activity,
+  Download,
+  HelpCircle,
 } from 'lucide-react';
 
 function Layout({ refreshActivity }: { refreshActivity: () => void }) {
@@ -29,12 +33,12 @@ function Layout({ refreshActivity }: { refreshActivity: () => void }) {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   const handleLogout = async () => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     
-    // 🔥 Catat logout dari frontend
     if (user) {
       try {
         await supabase
@@ -102,6 +106,33 @@ function Layout({ refreshActivity }: { refreshActivity: () => void }) {
   document.addEventListener('mousedown', handleClickOutside);
   return () => document.removeEventListener('mousedown', handleClickOutside);
 }, [isProfileDropdownOpen]);
+
+// <--- FUNGSI EXPORT BARU (Disadur dari SettingsModal)
+  const handleExportData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User tidak ditemukan');
+
+      const { data: entries, error } = await supabase
+        .from('entries')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      if (!entries || entries.length === 0) {
+        toast.info('Belum ada jurnal untuk diekspor.');
+        return;
+      }
+
+      await exportAllEntries(entries);
+      toast.success('Data berhasil diekspor ke PDF!');
+    } catch (err: unknown) {
+      toast.error('Gagal ekspor data: ' + (err as Error).message);
+    } finally {
+      closeUserDropdown();
+    }
+  };
 
   const navItems = [
     { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -210,7 +241,7 @@ const bottomNavItems = [
           ))}
         </nav>
 
-        {/* ===== USER DROPDOWN (di Bawah Sidebar) ===== */}
+        {/* ===== USER DROPDOWN (saat Siderbar dibuka) ===== */}
         <div className="border-t border-gray-200 dark:border-slate-700 p-2 relative" ref={dropdownRef}>
           {/* Trigger: Avatar + Nama + Chevron */}
           <button
@@ -247,68 +278,96 @@ const bottomNavItems = [
             )}
           </button>
           
-          {/* Dropdown Menu (muncul ke ATAS) */}
-          {isUserDropdownOpen && !isCollapsed && (
-            <div className="absolute bottom-full left-0 right-0 mb-1 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden animate-fadeInUp">
-              <div className="p-1 space-y-0.5">
-                {/* Pengaturan */}
-                <button
-                  onClick={() => {
-                    setIsSettingsOpen(true);
-                    closeUserDropdown();
-                  }}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group w-full"
-                >
-                  <Settings className="w-5 h-5 text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400" />
-                  <span className="text-sm font-medium">Pengaturan</span>
-                </button>
-          
-                {/* Mode Gelap dengan Toggle */}
-                <button
-                  onClick={toggleTheme}
-                  className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group"
-                >
-                  <div className="flex items-center gap-3">
-                    {theme === 'light' ? (
-                      <Moon className="w-5 h-5 text-gray-400 group-hover:text-indigo-500" />
-                    ) : (
-                      <Sun className="w-5 h-5 text-yellow-400 group-hover:text-yellow-300" />
-                    )}
-                    <span className="text-sm font-medium">
-                      {theme === 'light' ? 'Mode Gelap' : 'Mode Terang'}
-                    </span>
-                  </div>
-                  {/* Toggle Switch */}
-                  <div
-                    className={`w-10 h-5 rounded-full transition ${
-                      theme === 'dark' ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
-                    }`}
-                  >
-                    <div
-                      className={`w-4 h-4 bg-white rounded-full transition-transform shadow-sm ${
-                        theme === 'dark' ? 'translate-x-5' : 'translate-x-0.5'
-                      } mt-0.5`}
-                    />
-                  </div>
-                </button>
-                    
-                {/* Divider */}
-                <div className="border-t border-gray-200 dark:border-slate-700 my-1" />
-                    
-                {/* Logout */}
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    closeUserDropdown();
-                  }}
-                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition group"
-                >
-                  <LogOut className="w-5 h-5 text-red-500 group-hover:text-red-600" />
-                  <span className="text-sm font-medium">Logout</span>
-                </button>
-              </div>
+        {/* Dropdown Menu - LOGIKA BARU: Muncul ke atas jika lebar, melayang ke kanan jika ciut */}
+        {isUserDropdownOpen && (
+          <div 
+            className={`
+              absolute z-50 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-hidden animate-fadeInUp
+              ${isCollapsed 
+                ? 'bottom-14 left-10 w-56'
+                : 'bottom-full left-0 right-0 mb-2 w-auto' 
+              }
+            `}
+          >
+            {/* Header Email */}
+            <div className="px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">
+                {userEmail}
+              </p>
             </div>
-          )}
+            
+            <div className="p-1 space-y-0.5">
+              {/* Mode Gelap dengan Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group"
+              >
+                <div className="flex items-center gap-3">
+                  {theme === 'light' ? (
+                    <Moon className="w-4 h-4 text-gray-400 group-hover:text-indigo-500" />
+                  ) : (
+                    <Sun className="w-4 h-4 text-yellow-400" />
+                  )}
+                  <span className="text-sm font-medium">
+                    {theme === 'light' ? 'Mode Gelap' : 'Mode Terang'}
+                  </span>
+                </div>
+                <div className={`w-8 h-4 rounded-full transition relative ${theme === 'dark' ? 'bg-blue-500' : 'bg-gray-300'}`}>
+                  <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${theme === 'dark' ? 'translate-x-4' : 'translate-x-0'}`} />
+                </div>
+              </button>
+                
+              <div className="border-t border-gray-100 dark:border-slate-700 my-1" />
+                
+              {/* === FITUR BARU: EXPORT DATA === */}
+              <button
+                onClick={handleExportData}
+                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group text-left"
+              >
+                <Download className="w-4 h-4 text-gray-400 group-hover:text-green-500" />
+                <span className="text-sm font-medium">Export Data</span>
+              </button>
+
+              {/* Pengaturan */}
+              <button
+                onClick={() => {
+                  setIsSettingsOpen(true);
+                  closeUserDropdown();
+                }}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group w-full text-left"
+              >
+                <Settings className="w-4 h-4 text-gray-400 group-hover:text-blue-500" />
+                <span className="text-sm font-medium">Pengaturan</span>
+              </button>
+                
+              {/* === FITUR BARU: BANTUAN === */}
+              <button
+                onClick={() => {
+                  setIsHelpOpen(true);
+                  closeUserDropdown();
+                }}
+                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group text-left"
+              >
+                <HelpCircle className="w-4 h-4 text-gray-400 group-hover:text-purple-500" />
+                <span className="text-sm font-medium">Feedback</span>
+              </button>
+              
+              <div className="border-t border-gray-100 dark:border-slate-700 my-1" />
+              
+              {/* Logout */}
+              <button
+                onClick={() => {
+                  handleLogout();
+                  closeUserDropdown();
+                }}
+                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition group text-left"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="text-sm font-medium">Log out</span>
+              </button>
+            </div>
+          </div>
+        )}
         </div>
       </aside>
 
@@ -336,6 +395,7 @@ const bottomNavItems = [
         </main>
       </div>
       <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+      <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
       {/* ===== BOTTOM NAVIGATION (Mobile Only) ===== */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700 md:hidden">
         <div className="flex items-center justify-around px-1 py-1.5">

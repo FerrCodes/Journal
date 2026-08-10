@@ -160,7 +160,7 @@ function Login() {
               <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-slate-700 flex-shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                    <img src="/public/logo.png" alt="Journal App" className="w-10 h-10" />
+                    <img src="/logo.png" alt="Journal App" className="w-10 h-10" />
                   </div>
                   <h2 className="text-lg pt-5 font-bold text-gray-900 dark:text-gray-100">
                     Tentang Journal App

@@ -121,7 +121,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       setTotalEntries(0);
       toast.success('Semua jurnal berhasil dihapus!');
     } catch (err: unknown) {
-      toast.error('❌ Gagal menghapus: ' + (err as Error).message);
+      toast.error('Gagal menghapus: ' + (err as Error).message);
     } finally {
       setIsDeleting(false);
     }

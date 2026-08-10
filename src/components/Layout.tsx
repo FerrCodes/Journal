@@ -194,7 +194,7 @@ const bottomNavItems = [
             <span className="text-2xl flex-shrink-0"></span>
             {!isCollapsed && (
               <span className="text-xl font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap flex items-center gap-1">
-                <img src="/public/logo.png" alt="Journal App" className="w-10 h-10" />
+                <img src="/logo.png" alt="Journal App" className="w-10 h-10" />
                 Journal
               </span>
             )}

@@ -74,7 +74,7 @@ function Login() {
             </button>
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/25 mb-4">
-                <img src="/public/logo.png" alt="Journal App" className="w-10 h-10" />
+                <img src="/logo.png" alt="Journal App" className="w-10 h-10" />
               </div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
                 Selamat Datang

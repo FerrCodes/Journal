@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner'
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import type { JournalEntry } from '../types/journal';
@@ -339,7 +339,7 @@ const confirmDeleteAllImages = async () => {
             className="inline-flex items-center gap-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-sm"
           >
             <span className="hidden sm:inline">← Kembali ke Dashboard</span>
-            <span className="sm:hidden">← Kembali</span>
+            <span className="sm:hidden">←</span>
           </Link>
         </div>
 
@@ -569,8 +569,8 @@ const confirmDeleteAllImages = async () => {
             isOpen={isConfirmOpen}
             onClose={() => setIsConfirmOpen(false)}
             onConfirm={confirmDelete}
-            title="Hapus Jurnal?"
-            message={`Apakah kamu yakin ingin menghapus jurnal "${entry?.title || 'Tanpa Judul'}"? Tindakan ini tidak bisa dibatalkan.`}
+            title="Hapus Jurnal"
+            message={`Apakah kamu yakin ingin menghapus jurnal "${entry?.title || 'Tanpa Judul'}" ini?`}
             confirmText="Ya, Hapus"
             cancelText="Batal"
             type="danger"
@@ -582,8 +582,8 @@ const confirmDeleteAllImages = async () => {
               setImageToDelete(null);
             }}
             onConfirm={confirmDeleteImage}
-            title="Hapus Foto?"
-            message="Apakah kamu yakin ingin menghapus foto ini? Tindakan ini tidak bisa dibatalkan."
+            title="Hapus Foto"
+            message="Yakin ingin menghapus foto ini?"
             confirmText="Ya, Hapus"
             cancelText="Batal"
             type="danger"
@@ -592,8 +592,8 @@ const confirmDeleteAllImages = async () => {
             isOpen={isDeleteAllImagesOpen}
             onClose={() => setIsDeleteAllImagesOpen(false)}
             onConfirm={confirmDeleteAllImages}
-            title="Hapus Semua Foto?"
-            message={`Apakah kamu yakin ingin menghapus semua ${images.length} foto? Tindakan ini tidak bisa dibatalkan.`}
+            title="Hapus Semua Foto dari Jurnal"
+            message={`Yakin ingin menghapus semua foto dari Jurnal ini?`}
             confirmText="Ya, Hapus Semua"
             cancelText="Batal"
             type="danger"

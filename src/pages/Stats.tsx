@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner'
 import { supabase } from '../services/supabase';
 import { Link } from 'react-router-dom';
 import { Skeleton } from '../components/Skeleton';

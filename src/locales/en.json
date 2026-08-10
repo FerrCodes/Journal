@@ -1,0 +1,87 @@
+{
+  "app": {
+    "name": "Journal App",
+    "title": "Daily Journal"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "create": "Create",
+    "stats": "Stats",
+    "calendar": "Calendar",
+    "archive": "Archive",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "welcome": "Welcome Back",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "dashboard": {
+    "title": "Journal List",
+    "totalEntries": "Total Entries",
+    "latestMood": "Latest Mood",
+    "search": "Search journal...",
+    "write": "Write New",
+    "noEntries": "No entries yet"
+  },
+  "create": {
+    "title": "New Journal",
+    "back": "Back",
+    "judul": "Title",
+    "content": "Content",
+    "mood": "Today's Mood",
+    "song": "Favorite Song",
+    "weather": "Weather",
+    "tags": "Tags",
+    "photos": "Photos",
+    "save": "Save Journal",
+    "saving": "Saving..."
+  },
+  "detail": {
+    "back": "Back to Dashboard",
+    "mood": "Mood",
+    "edit": "Edit",
+    "delete": "Delete",
+    "pdf": "PDF",
+    "favorite": "Favorite",
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "song": "Today's Favorite Song",
+    "photos": "Photos",
+    "tags": "Tags",
+    "deleteConfirm": "Are you sure you want to delete this journal?"
+  },
+  "settings": {
+    "title": "Settings",
+    "general": "General",
+    "profile": "Profile",
+    "data": "Data",
+    "about": "About",
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "notifications": "Notifications",
+    "totalEntries": "Total Entries",
+    "export": "Export All Data",
+    "deleteAll": "Delete All Journals",
+    "logout": "Logout",
+    "switchAccount": "Switch Account"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "save": "Save",
+    "update": "Update"
+  }
+}

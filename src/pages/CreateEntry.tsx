@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { MOOD_OPTIONS } from '../types/journal';
 import type { MoodValue } from '../types/journal';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner'
 import { PenSquare, Save, Tag, Loader2, Image, Upload, X, Music, Cloud } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -28,11 +28,9 @@ function CreateEntry() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User tidak ditemukan.');
-
       const { data: entryData, error: insertError } = await supabase
         .from('entries')
         .insert({
@@ -48,25 +46,14 @@ function CreateEntry() {
         })
         .select()
         .single();
-
       if (insertError) throw insertError;
-
       if (files.length > 0 && entryData) {
         setUploading(true);
         const imageUrls = await uploadImages(entryData.id);
-        
-        const imageInserts = imageUrls.map((url) => ({
-          entry_id: entryData.id,
-          image_url: url,
-        }));
-
-        const { error: imageError } = await supabase
-          .from('entry_images')
-          .insert(imageInserts);
-
+        const imageInserts = imageUrls.map((url) => ({ entry_id: entryData.id, image_url: url }));
+        const { error: imageError } = await supabase.from('entry_images').insert(imageInserts);
         if (imageError) throw imageError;
       }
-
       toast.success('✅ Jurnal berhasil disimpan!');
       navigate('/');
     } catch (err: unknown) {
@@ -100,7 +87,7 @@ function CreateEntry() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
     if (selectedFiles.length + files.length > 3) {
-      toast.warning('⚠️ Maksimal 3 foto per jurnal.');
+      toast.warning('Maksimal 3 foto per jurnal.');
       return;
     }
     setFiles([...files, ...selectedFiles]);
@@ -139,9 +126,10 @@ function CreateEntry() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6">
+    <div className="w-full max-w-full overflow-hidden px-4 py-6">
+      <div className="max-w-3xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 sm:mb-6">
+      <div className="flex items-center justify-between mb-4">  
         <div className="flex items-center gap-2">
           <PenSquare className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">Jurnal Baru</h1>
@@ -166,7 +154,7 @@ function CreateEntry() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Masukkan judul jurnal..."
-            className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
+            className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
           />
         </div>
 
@@ -220,21 +208,21 @@ function CreateEntry() {
               value={songTitle}
               onChange={(e) => setSongTitle(e.target.value)}
               placeholder="Judul lagu..."
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
+              className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
             <input
               type="text"
               value={songArtist}
               onChange={(e) => setSongArtist(e.target.value)}
               placeholder="Nama artis..."
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
+              className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
             <input
               type="url"
               value={songUrl}
               onChange={(e) => setSongUrl(e.target.value)}
               placeholder="Link Spotify / YouTube..."
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
+              className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
           </div>
         </div>
@@ -250,7 +238,7 @@ function CreateEntry() {
             value={weather}
             onChange={(e) => setWeather(e.target.value)}
             placeholder="Cerah, Hujan, Mendung..."
-            className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
+            className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
           />
         </div>
 
@@ -260,19 +248,19 @@ function CreateEntry() {
             <Tag className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             Tags <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
           </label>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <input
               type="text"
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Ketik tag, lalu Enter..."
-              className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
+              className="w-full max-w-full flex-1 px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
             <button
-              type="submit"
-              disabled={loading || uploading || !content}
-              className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 text-sm sm:text-base shadow-md shadow-blue-500/20"
+              type="button"
+              onClick={handleAddTag}
+              className="px-5 py-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded-xl transition text-sm font-medium whitespace-nowrap"
             >
               Tambah
             </button>
@@ -365,8 +353,9 @@ function CreateEntry() {
               Simpan Jurnal
             </>
           )}
-        </button>
-      </form>
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useReminder } from '../hooks/useReminder';
 import { supabase } from '../services/supabase';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner'
 import {
   UserRound,
   Mail,
@@ -18,15 +18,22 @@ import {
   Settings as SettingsIcon,
   Info,
   Globe,
+  LogOut,
+  ArrowRight,
+  CheckCircle,
+  CircleSlash,
+  XCircle,
+  AlertCircle
 } from 'lucide-react';
 import { exportAllEntries } from '../utils/exportPDF';
 import ConfirmModal from '../components/ConfirmModal';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 type MenuTab = 'general' | 'profile' | 'data' | 'about';
 
 function Settings() {
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const { settings, permission, requestPermission, saveSettings } = useReminder();
   const [activeTab, setActiveTab] = useState<MenuTab>('general');
   const [userEmail, setUserEmail] = useState('');
@@ -35,6 +42,7 @@ function Settings() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [userCreatedAt, setUserCreatedAt] = useState<string>('');
 
   const menuItems = [
     { id: 'general', icon: SettingsIcon, label: 'Umum' },
@@ -51,6 +59,15 @@ function Settings() {
         if (user) {
           setUserEmail(user.email || '');
           setUserName(user.user_metadata?.full_name || user.email?.split('@')[0] || 'User');
+          // Format tanggal dibuatnya akun
+          const createdAt = new Date(user.created_at || Date.now());
+          setUserCreatedAt(
+            new Intl.DateTimeFormat('id-ID', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            }).format(createdAt)
+          );
         }
 
         const { data: entries, error } = await supabase
@@ -72,7 +89,7 @@ function Settings() {
 
   const handleDeleteAll = () => {
     if (totalEntries === 0) {
-      toast.info('📭 Belum ada jurnal untuk dihapus.');
+      toast.info('Belum ada jurnal untuk dihapus.');
       return;
     }
     setIsConfirmOpen(true);
@@ -91,13 +108,23 @@ function Settings() {
 
       if (error) throw error;
       setTotalEntries(0);
-      toast.success('✅ Semua jurnal berhasil dihapus!');
+      toast.success('Semua jurnal berhasil dihapus!');
     } catch (err: unknown) {
       toast.error('❌ Gagal menghapus: ' + (err as Error).message);
     } finally {
       setIsDeleting(false);
     }
   };
+
+const handleLogout = async () => {
+  try {
+    await supabase.auth.signOut();
+    toast.success('Berhasil logout!');
+    navigate('/login');
+  } catch (err: unknown) {
+    toast.error('❌ Gagal logout: ' + (err as Error).message);
+  }
+};
 
   const handleExportAll = async () => {
     try {
@@ -112,12 +139,12 @@ function Settings() {
 
       if (error) throw error;
       if (!entries || entries.length === 0) {
-        toast.info('📭 Belum ada jurnal untuk diekspor.');
+        toast.info('Belum ada jurnal untuk diekspor.');
         return;
       }
 
       await exportAllEntries(entries);
-      toast.success('✅ Data berhasil diekspor!');
+      toast.success('Data berhasil diekspor!');
     } catch (err: unknown) {
       toast.error('❌ Gagal ekspor data: ' + (err as Error).message);
     }
@@ -225,28 +252,82 @@ function Settings() {
                   </div>
 
                   {/* Notifikasi */}
-                  <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-slate-700">
-                    <div className="flex items-center gap-3">
-                      <Bell className="w-5 h-5 text-gray-500" />
-                      <span className="text-gray-700 dark:text-gray-300">Notifikasi</span>
+                  <div className="py-2 border-b border-gray-100 dark:border-slate-700">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Bell className="w-5 h-5 text-gray-500" />
+                        <span className="text-gray-700 dark:text-gray-300">Notifikasi</span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          if (!settings.enabled && permission !== 'granted') {
+                            requestPermission();
+                          }
+                          saveSettings({ ...settings, enabled: !settings.enabled });
+                        }}
+                        className={`w-11 h-6 rounded-full transition ${
+                          settings.enabled ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
+                        }`}
+                      >
+                        <div
+                          className={`w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${
+                            settings.enabled ? 'translate-x-5' : 'translate-x-0.5'
+                          } mt-0.5`}
+                        />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => {
-                        if (!settings.enabled && permission !== 'granted') {
-                          requestPermission();
-                        }
-                        saveSettings({ ...settings, enabled: !settings.enabled });
-                      }}
-                      className={`w-11 h-6 rounded-full transition ${
-                        settings.enabled ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
-                      }`}
-                    >
-                      <div
-                        className={`w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${
-                          settings.enabled ? 'translate-x-5' : 'translate-x-0.5'
-                        } mt-0.5`}
-                      />
-                    </button>
+                        
+                    {/* Deskripsi Notifikasi */}
+                    <div className="mt-2 pl-8 space-y-1">
+                      {/* Status aktif/nonaktif */}
+                      <div className="flex items-center gap-1.5">
+                        {settings.enabled ? (
+                          <>
+                            <CheckCircle className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+                            <span className="text-xs text-green-600 dark:text-green-400 font-medium">Notifikasi aktif</span>
+                          </>
+                        ) : (
+                          <>
+                            <CircleSlash className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                            <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">Notifikasi nonaktif</span>
+                          </>
+                        )}
+                      </div>
+                      
+                      {/* Deskripsi fungsi */}
+                      <p className="text-[10px] text-gray-400 dark:text-slate-300 leading-relaxed">
+                        {settings.enabled
+                          ? '🔔 Kamu akan mendapat pengingat setiap hari pukul '
+                          : '🔕 Aktifkan notifikasi untuk mendapat pengingat menulis jurnal setiap hari.'}
+                        {settings.enabled && (
+                          <span className="font-medium text-gray-500 dark:text-gray-400">
+                            {settings.hour.toString().padStart(2, '0')}:
+                            {settings.minute.toString().padStart(2, '0')}
+                          </span>
+                        )}
+                        {settings.enabled && ' WIB.'}
+                      </p>
+                      
+                      {/* Status izin */}
+                      <div className="flex items-center gap-1.5 pt-0.5">
+                        {permission === 'granted' ? (
+                          <>
+                            <CheckCircle className="w-3 h-3 text-green-500" />
+                            <span className="text-[10px] text-green-500">Izin notifikasi diberikan</span>
+                          </>
+                        ) : permission === 'denied' ? (
+                          <>
+                            <XCircle className="w-3 h-3 text-red-500" />
+                            <span className="text-[10px] text-red-500">Izin notifikasi ditolak. Izinkan di pengaturan browser/HP.</span>
+                          </>
+                        ) : (
+                          <>
+                            <AlertCircle className="w-3 h-3 text-yellow-500" />
+                            <span className="text-[10px] text-yellow-500">Belum minta izin notifikasi. Klik toggle untuk meminta izin.</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
                   {settings.enabled && (
                     <div className="flex items-center gap-3 py-1 pl-8">
@@ -287,20 +368,48 @@ function Settings() {
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Profil</h3>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-md flex-shrink-0">
+                  {/* Avatar & Info */}
+                  <div className="flex items-center gap-4 min-w-0">
+                    {/*<div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-md flex-shrink-0">
                       {userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
-                    </div>
-                    <div>
-                      <p className="text-lg font-medium text-gray-900 dark:text-gray-100">{userName}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                        <Mail className="w-4 h-4" /> {userEmail}
+                    </div>*/}
+                    <div className="min-w-0">
+                      <p className="text-lg font-medium text-gray-900 dark:text-gray-100 truncate">{userName}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1 min-w-0">
+                        <Mail className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">{userEmail}</span>
                       </p>
                     </div>
                   </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+            
+                  {/* Total Jurnal */}
+                  <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2 py-2 border-b border-gray-100 dark:border-slate-700">
                     <Calendar className="w-4 h-4" />
                     Total Jurnal: <strong className="text-gray-700 dark:text-gray-300">{totalEntries}</strong>
+                  </div>
+                  {/* ===== TANGGAL DIBUAT AKUN ===== */}
+                  <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2 py-2 border-b border-gray-100 dark:border-slate-700">
+                    <Calendar className="w-4 h-4" />
+                    Akun dibuat: <strong className="text-gray-700 dark:text-gray-300">{userCreatedAt || 'Belum tersedia'}</strong>
+                  </div>
+                    
+                  {/* ===== LOGOUT ===== */}
+                  <div>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center justify-between px-4 py-3 bg-red-50 dark:bg-red-900/20 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/40 transition group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                          <LogOut className="w-5 h-5 text-red-600 dark:text-red-400" />
+                        </div>
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-red-600 dark:text-red-400">Logout</p>
+                          <p className="text-xs text-red-500 dark:text-red-400">Keluar dari akun ini</p>
+                        </div>
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-red-400 group-hover:text-red-600 dark:group-hover:text-red-400 transition" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -328,7 +437,7 @@ function Settings() {
                     <span>{isDeleting ? 'Menghapus...' : `Hapus Semua Jurnal (${totalEntries})`}</span>
                   </button>
                   <p className="text-xs text-red-500 dark:text-red-400 text-center">
-                    ⚠️ Tindakan ini tidak bisa dibatalkan.
+                    Tindakan ini tidak bisa dibatalkan. Dan terhapus permanent
                   </p>
                 </div>
               </div>
@@ -359,7 +468,7 @@ function Settings() {
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={confirmDeleteAll}
         title="Hapus Semua Jurnal?"
-        message={`Kamu akan menghapus SEMUA ${totalEntries} jurnal. Tindakan ini TIDAK BISA DIBATALKAN!`}
+        message={`Jurnal yang tersedia ${totalEntries}, termasuk yang sudah di Arsipkan.`}
         confirmText="Ya, Hapus Semua"
         cancelText="Batal"
         type="danger"

@@ -3,7 +3,7 @@ import { supabase } from '../services/supabase';
 import { Link } from 'react-router-dom';
 import type { JournalEntry } from '../types/journal';
 import { MOOD_OPTIONS } from '../types/journal';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner'
 import { PenSquare, Search, Filter, X, BarChart3, Calendar, Smile, BookOpen, Star, Cloud, Music, ChevronDown, Archive } from 'lucide-react';
 
 function Dashboard() {

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Archive, ArchiveRestore, Calendar } from 'lucide-react';
 import type { JournalEntry } from '../types/journal';
 import { MOOD_OPTIONS } from '../types/journal';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner'
 
 function ArchivePage() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);

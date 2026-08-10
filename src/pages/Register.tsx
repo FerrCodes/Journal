@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner'
 import { supabase } from '../services/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, Lock, Eye, EyeOff, X, BookOpen, Camera, FileDown, PenSquare, BarChart3, Calendar, Info} from 'lucide-react';

@@ -1,0 +1,87 @@
+{
+  "app": {
+    "name": "Journal App",
+    "title": "Jurnal Harian"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "create": "Tambah",
+    "stats": "Statistik",
+    "calendar": "Kalender",
+    "archive": "Arsip",
+    "settings": "Pengaturan",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Masuk",
+    "register": "Daftar",
+    "email": "Email",
+    "password": "Password",
+    "welcome": "Selamat Datang",
+    "noAccount": "Belum punya akun?",
+    "hasAccount": "Sudah punya akun?"
+  },
+  "dashboard": {
+    "title": "Daftar Jurnal",
+    "totalEntries": "Total Jurnal",
+    "latestMood": "Mood Terakhir",
+    "search": "Cari jurnal...",
+    "write": "Tulis Baru",
+    "noEntries": "Belum ada jurnal"
+  },
+  "create": {
+    "title": "Jurnal Baru",
+    "back": "Kembali",
+    "judul": "Judul",
+    "content": "Isi Jurnal",
+    "mood": "Mood Hari Ini",
+    "song": "Lagu Favorit",
+    "weather": "Cuaca",
+    "tags": "Tags",
+    "photos": "Foto",
+    "save": "Simpan Jurnal",
+    "saving": "Menyimpan..."
+  },
+  "detail": {
+    "back": "Kembali ke Dashboard",
+    "mood": "Mood",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "pdf": "PDF",
+    "favorite": "Favorit",
+    "archive": "Arsipkan",
+    "unarchive": "Kembalikan",
+    "song": "Lagu Favorit Hari Ini",
+    "photos": "Foto",
+    "tags": "Tags",
+    "deleteConfirm": "Yakin ingin menghapus jurnal ini?"
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "general": "Umum",
+    "profile": "Profil",
+    "data": "Data",
+    "about": "Tentang",
+    "language": "Bahasa",
+    "theme": "Tema",
+    "light": "Terang",
+    "dark": "Gelap",
+    "notifications": "Notifikasi",
+    "totalEntries": "Total Jurnal",
+    "export": "Ekspor Semua Data",
+    "deleteAll": "Hapus Semua Jurnal",
+    "logout": "Logout",
+    "switchAccount": "Ganti Akun"
+  },
+  "common": {
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan",
+    "success": "Berhasil",
+    "cancel": "Batal",
+    "confirm": "Konfirmasi",
+    "yes": "Ya",
+    "no": "Tidak",
+    "save": "Simpan",
+    "update": "Update"
+  }
+}

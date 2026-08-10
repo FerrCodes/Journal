@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { useTheme } from '../context/ThemeContext';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner'
 import { useState, useRef, useEffect } from 'react';
 import SettingsModal from './SettingsModal';
 import {
@@ -307,12 +307,12 @@ const bottomNavItems = [
         </main>
       </div>
       <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
-{/* ===== BOTTOM NAVIGATION (Mobile Only) ===== */}
-<div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700 md:hidden">
-  <div className="flex items-center justify-around px-1 py-1.5">
-    {bottomNavItems.map(({ to, icon: Icon, label }) => {
-      const isTulis = to === '/create';
-      const active = isActive(to);
+      {/* ===== BOTTOM NAVIGATION (Mobile Only) ===== */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700 md:hidden">
+        <div className="flex items-center justify-around px-1 py-1.5">
+          {bottomNavItems.map(({ to, icon: Icon, label }) => {
+            const isTulis = to === '/create';
+            const active = isActive(to);
 
       return (
         <NavLink

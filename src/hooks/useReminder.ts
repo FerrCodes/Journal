@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner'
 
 interface ReminderSettings {
   enabled: boolean;
@@ -57,9 +57,9 @@ export function useReminder() {
     localStorage.setItem('reminderSettings', JSON.stringify(newSettings));
     
     if (newSettings.enabled) {
-      toast.success(`✅ Reminder diatur pada ${newSettings.hour.toString().padStart(2, '0')}:${newSettings.minute.toString().padStart(2, '0')}`);
+      toast.success(`Reminder diatur pada ${newSettings.hour.toString().padStart(2, '0')}:${newSettings.minute.toString().padStart(2, '0')}`);
     } else {
-      toast.info('⏰ Reminder dimatikan');
+      toast.info('Reminder dimatikan');
     }
   };
 
@@ -93,8 +93,8 @@ const checkReminder = useCallback(() => {
     
     if (lastSent !== today) {
       sendNotification(
-        '📓 Waktunya Menulis Jurnal!',
-        'Jangan lupa tulis pengalaman hari ini di Journal App 📝'
+        'Waktunya Menulis Jurnal!',
+        'Ada yang penting hari ini? Coba buat Jurnal sekarang'
       );
       localStorage.setItem('lastReminderDate', today);
     }

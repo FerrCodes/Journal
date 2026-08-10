@@ -1,75 +1,35 @@
-# React + TypeScript + Vite
+# 📔 Journal App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Sebuah ruang digital pribadi untuk mencatat pikiran, perasaan, dan momen sehari-hari.
 
-Currently, two official plugins are available:
+![Status](https://img.shields.io/badge/Status-Work%20in%20Progress-yellow)
+![React](https://img.shields.io/badge/React-18-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue)
+![Tailwind](https://img.shields.io/badge/Tailwind-CSS-38bdf8)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🛠️ Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Project ini dibangun dengan teknologi modern yang berfokus pada performa dan *type-safety*:
 
-## Expanding the ESLint configuration
+| Kategori | Teknologi |
+| :--- | :--- |
+| **Frontend** | React 18, TypeScript (Strict Mode), Vite |
+| **Styling** | Tailwind CSS, Lucide React (Icons) |
+| **Backend & DB** | Supabase (PostgreSQL, Auth, Realtime) |
+| **Utilities** | jsPDF (Export PDF), Sonner (Toast Notifications) |
+| **Routing** | React Router DOM v6 |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Roadmap & Pengembangan Saat Ini
+- Akan dijadikan versi aplikasi tapi fokus pada versi web terlebih dahulu,
+- untuk memperbaiki bug dan fitur serta responsif juga kedepannya
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+<div align="center">
+<p>Dibuat dengan ❤️ oleh <strong>Feri</strong></p>
+<p><sub>Journal App v1.5.0 • Work in Progress</sub></p>
+</div>

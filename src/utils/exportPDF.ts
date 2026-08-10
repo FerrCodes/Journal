@@ -11,7 +11,7 @@ export const exportSingleEntry = async (entry: JournalEntry) => {
   // Title
   doc.setFontSize(20);
   doc.setTextColor(30, 58, 138);
-  doc.text('📓 Journal Entry', margin, y);
+  doc.text('Journal Entry', margin, y);
   y += 10;
 
   // Date
@@ -81,7 +81,7 @@ export const exportAllEntries = async (entries: JournalEntry[]) => {
   // Header
   doc.setFontSize(24);
   doc.setTextColor(30, 58, 138);
-  doc.text('📓 Journal App', margin, y);
+  doc.text('Journal App', margin, y);
   y += 10;
 
   doc.setFontSize(12);

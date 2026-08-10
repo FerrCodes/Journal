@@ -18,9 +18,10 @@ import {
   ChevronDown,
   Calendar,
   Archive,
+  Activity
 } from 'lucide-react';
 
-function Layout() {
+function Layout({ refreshActivity }: { refreshActivity: () => void }) {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -30,10 +31,32 @@ function Layout() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleLogout = async () => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    // 🔥 Catat logout dari frontend
+    if (user) {
+      try {
+        await supabase
+          .from('activity_logs')
+          .insert({
+            user_id: user.id,
+            action: 'logout',
+            details: { email: user.email }
+          });
+        console.log('Logout tercatat!');
+      } catch (logError) {
+        console.warn('Gagal mencatat logout:', logError);
+      }
+    }
+
     await supabase.auth.signOut();
     toast.success('Berhasil Logout!');
     navigate('/login');
-  };
+  } catch (err) {
+    toast.error('Gagal logout: ' + (err as Error).message);
+  }
+};
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -86,6 +109,12 @@ function Layout() {
     { to: '/stats', icon: BarChart3, label: 'Statistik' },
     { to: '/calendar', icon: Calendar, label: 'Kalender' },
     { to: '/archive', icon: Archive, label: 'Arsip' },
+    { 
+      to: '/activity', 
+      icon: Activity, 
+      label: 'Aktivitas',
+      onClick: refreshActivity
+    },
   ];
 
   // Untuk bottom navigation (mobile)

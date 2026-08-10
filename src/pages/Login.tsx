@@ -8,32 +8,55 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const navigate = useNavigate();
   const [activeAboutTab, setActiveAboutTab] = useState('Tentang');
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: password.trim(),
+    });
 
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
-      toast.success('Selamat datang kembali!');
-      navigate('/');
-    } catch (err: unknown) {
-      setError((err as Error).message);
-      toast.error('❌ Login gagal: ' + (err as Error).message);
-    } finally {
-      setLoading(false);
+    if (error) {
+      console.error('Supabase error:', error);
+      toast.error(error.message || 'Login gagal!');
+      return;
     }
-  };
+
+    if (data?.user) {
+      // 🔥 TAMBAHKAN INI: Insert ke activity_logs dari frontend
+      try {
+        await supabase
+          .from('activity_logs')
+          .insert({
+            user_id: data.user.id,
+            action: 'login',
+            details: { email: data.user.email }
+          });
+        console.log('Activity log tercatat!');
+      } catch (logError) {
+        console.warn('Gagal mencatat aktivitas:', logError);
+        // Abaikan error, login tetap berhasil
+      }
+
+      toast.success('Login berhasil!');
+      navigate('/');
+    } else {
+      toast.error('Email atau password salah!');
+    }
+  } catch (err) {
+    console.error('Login error:', err);
+    const errorMessage = err instanceof Error ? err.message : 'Terjadi kesalahan';
+    toast.error(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-4">
@@ -102,12 +125,6 @@ function Login() {
                   </button>
                 </div>
               </div>
-
-              {error && (
-                <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-xl text-red-700 dark:text-red-300 text-sm">
-                  {error}
-                </div>
-              )}
 
               <button
                 type="submit"
@@ -189,9 +206,8 @@ function Login() {
                       </p>
                       <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800/50">
                         <p className="text-sm text-yellow-700 dark:text-yellow-300 flex items-start gap-2">
-                          <span className="text-lg">⚠️</span>
                           <span>
-                            <strong>Penting:</strong> Aplikasi ini masih dalam tahap pengembangan dan masih dalam percobaan di Android.
+                            <strong>Penting:</strong> Web ini masih dalam pengembangan
                           </span>
                         </p>
                       </div>
@@ -299,7 +315,7 @@ function Login() {
                           </a>
                         </div>
                         <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
-                          Klik icon untuk mengunjungi profil kami 🚀
+                          
                         </p>
                       </div>
                     )}

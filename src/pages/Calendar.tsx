@@ -12,7 +12,6 @@ import {
   parseDate
 } from '../utils/dateUtils';
 
-// Komponen DayCell (tetap sama)
 interface DayCellProps {
   dayNumber: number;
   date: Date;
@@ -120,7 +119,7 @@ function Calendar() {
     };
 
     loadEntries();
-  }, []); // ← Dependency kosong, hanya jalan sekali
+  }, []);
 
   const getMoodEmoji = useCallback((mood: number | null | undefined) => {
     if (mood === null || mood === undefined) return '😐';

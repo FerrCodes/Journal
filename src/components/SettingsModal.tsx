@@ -147,7 +147,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       await exportAllEntries(entries);
       toast.success('Data berhasil diekspor!');
     } catch (err: unknown) {
-      toast.error('❌ Gagal ekspor data: ' + (err as Error).message);
+      toast.error('Gagal ekspor data: ' + (err as Error).message);
     }
   };
 
@@ -333,7 +333,7 @@ function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                       <p className="text-[10px] text-gray-400 dark:text-slate-300 leading-relaxed">
                         {settings.enabled
                           ? '🔔 Kamu akan mendapat pengingat setiap hari pukul '
-                          : '🔕 Aktifkan notifikasi untuk mendapat pengingat menulis jurnal setiap hari.'}
+                          : '🔕 Aktifkan notifikasi jika ingin mengingat membuat Jurnal baru'}
                         {settings.enabled && (
                           <span className="font-medium text-gray-500 dark:text-gray-400">
                             {settings.hour.toString().padStart(2, '0')}:

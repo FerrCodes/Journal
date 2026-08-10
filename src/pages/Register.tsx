@@ -25,11 +25,11 @@ function Register() {
         password,
       });
       if (error) throw error;
-      toast.success('✅ Registrasi berhasil! Silakan login.');
+      toast.success('Registrasi berhasil! Silakan login.');
       navigate('/login');
     } catch (err: unknown) {
       setError((err as Error).message);
-      toast.error('❌ Registrasi gagal: ' + (err as Error).message);
+      toast.error('Registrasi gagal: ' + (err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -124,9 +124,8 @@ function Register() {
                       </p>
                       <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800/50">
                         <p className="text-sm text-yellow-700 dark:text-yellow-300 flex items-start gap-2">
-                          <span className="text-lg">⚠️</span>
                           <span>
-                            <strong>Penting:</strong> Aplikasi ini masih dalam tahap pengembangan dan masih dalam percobaan di Android.
+                            <strong>Penting:</strong> Web ini masih dalam pengembangan
                           </span>
                         </p>
                       </div>

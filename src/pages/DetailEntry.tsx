@@ -121,7 +121,7 @@ function DetailEntry() {
       navigate('/');
     } catch (err: unknown) {
       setError((err as Error).message);
-      toast.error('❌ Gagal menghapus jurnal: ' + (err as Error).message);
+      toast.error('Gagal menghapus jurnal: ' + (err as Error).message);
     }
   };
 
@@ -168,9 +168,9 @@ function DetailEntry() {
       if (error) throw error;
 
       setEntry({ ...entry, is_favorite: !entry.is_favorite });
-      toast.success(entry.is_favorite ? '⭐ Berhasil dihapus dari Favorit' : '⭐ Berhasil ditambahkan ke Favorit!');
+      toast.success(entry.is_favorite ? 'Dihapus dari Favorit' : 'Ditambahkan ke Favorit!');
     } catch (err: unknown) {
-      toast.error('❌ Gagal update favorit: ' + (err as Error).message);
+      toast.error('Gagal update favorit: ' + (err as Error).message);
     }
   };
 
@@ -191,7 +191,7 @@ function DetailEntry() {
         navigate('/');
       }
     } catch (err: unknown) {
-      toast.error('❌ Gagal mengarsipkan: ' + (err as Error).message);
+      toast.error('Gagal mengarsipkan: ' + (err as Error).message);
     }
   };
 
@@ -218,7 +218,7 @@ function DetailEntry() {
       setEditDate(false);
       toast.success('Tanggal & cuaca berhasil diupdate!');
     } catch (err: unknown) {
-      toast.error('❌ Gagal update: ' + (err as Error).message);
+      toast.error('Gagal update: ' + (err as Error).message);
     }
   };
 
@@ -245,7 +245,7 @@ function DetailEntry() {
       setImages(images.filter((img) => img.id !== imageToDelete.id));
       toast.success('Foto berhasil dihapus!');
     } catch (err: unknown) {
-      toast.error('❌ Gagal hapus foto: ' + (err as Error).message);
+      toast.error('Gagal hapus foto: ' + (err as Error).message);
     } finally {
       setIsImageConfirmOpen(false);
       setImageToDelete(null);
@@ -279,7 +279,7 @@ const confirmDeleteAllImages = async () => {
     setImages([]);
     toast.success('Semua foto berhasil dihapus!');
   } catch (err: unknown) {
-    toast.error('❌ Gagal hapus foto: ' + (err as Error).message);
+    toast.error('Gagal hapus foto: ' + (err as Error).message);
   } finally {
     setIsDeleteAllImagesOpen(false);
   }

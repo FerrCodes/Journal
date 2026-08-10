@@ -45,7 +45,7 @@ function Stats() {
       setEntries(data || []);
     } catch (err: unknown) {
       setError((err as Error).message);
-      toast.error('❌ Gagal memuat statistik: ' + (err as Error).message);
+      toast.error('Gagal memuat statistik: ' + (err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -121,7 +121,7 @@ function Stats() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-4 sm:mb-6">
         <div className="flex items-center gap-2">
           <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />

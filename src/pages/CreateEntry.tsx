@@ -54,11 +54,11 @@ function CreateEntry() {
         const { error: imageError } = await supabase.from('entry_images').insert(imageInserts);
         if (imageError) throw imageError;
       }
-      toast.success('✅ Jurnal berhasil disimpan!');
+      toast.success('Jurnal berhasil disimpan!');
       navigate('/');
     } catch (err: unknown) {
       setError((err as Error).message);
-      toast.error('❌ Gagal menyimpan jurnal: ' + (err as Error).message);
+      toast.error('Gagal menyimpan jurnal: ' + (err as Error).message);
     } finally {
       setLoading(false);
       setUploading(false);

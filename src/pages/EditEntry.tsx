@@ -136,7 +136,7 @@ const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     navigate(`/entry/${id}`);
   } catch (err: unknown) {
     setError((err as Error).message);
-    toast.error('❌ Gagal memperbarui jurnal: ' + (err as Error).message);
+    toast.error('Gagal memperbarui jurnal: ' + (err as Error).message);
   } finally {
     setSaving(false);
     setUploading(false);
@@ -178,7 +178,7 @@ const removeExistingImage = async (imageId: string, imageUrl: string) => {
     setExistingImages(existingImages.filter((img) => img.id !== imageId));
     toast.success('Foto berhasil dihapus!');
   } catch (err: unknown) {
-    toast.error('❌ Gagal hapus foto: ' + (err as Error).message);
+    toast.error('Gagal hapus foto: ' + (err as Error).message);
   }
 };
 

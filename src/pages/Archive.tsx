@@ -43,7 +43,7 @@ function ArchivePage() {
       setEntries(entries.filter(e => e.id !== id));
       toast.success('📂 Dikeluarkan dari arsip!');
     } catch (err: unknown) {
-      toast.error('❌ Gagal mengembalikan: ' + (err as Error).message);
+      toast.error('Gagal mengembalikan: ' + (err as Error).message);
     }
   };
 

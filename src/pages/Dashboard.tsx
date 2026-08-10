@@ -38,7 +38,7 @@ function Dashboard() {
       setFilteredEntries(data || []);
     } catch (err: unknown) {
       setError((err as Error).message);
-      toast.error('❌ Gagal memuat data: ' + (err as Error).message);
+      toast.error('Gagal memuat data: ' + (err as Error).message);
     } finally {
       setLoading(false);
     }

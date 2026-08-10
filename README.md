@@ -24,11 +24,8 @@ Project ini dibangun dengan teknologi modern yang berfokus pada performa dan *ty
 ---
 
 ## Roadmap & Pengembangan Saat Ini
-- Aplikasi ini masih dalam tahap penyempurnaan aktif. Fokus pengembangan saat ini meliputi:
-Penyempurnaan interaksi floating dropdown pada sidebar collapsed.
-Penambahan modal Bantuan & Feedback terintegrasi.
-Optimasi query Supabase untuk statistik dashboard.
-Peningkatan aksesibilitas (A11y) pada komponen navigasi mobile.
+- Akan dijadikan versi aplikasi tapi fokus pada versi web terlebih dahulu,
+- untuk memperbaiki bug dan fitur serta responsif juga kedepannya
 
 ---
 

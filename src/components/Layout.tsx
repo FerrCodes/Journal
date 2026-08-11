@@ -58,7 +58,6 @@ function Layout({ refreshActivity }: { refreshActivity: () => void }) {
             action: 'logout',
             details: { email: user.email }
           });
-        console.log('Logout tercatat!');
       } catch (logError) {
         console.warn('Gagal mencatat logout:', logError);
       }

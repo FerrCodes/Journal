@@ -201,8 +201,9 @@ function Calendar() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-3 sm:px-4 py-8 text-center">
+        <div className="inline-block w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         <div className="animate-pulse text-gray-600 dark:text-gray-400">
-          ⏳ {t('common.loading')}
+          {t('common.loading')}
         </div>
       </div>
     );

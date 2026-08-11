@@ -21,6 +21,7 @@ import {
 import { exportAllEntries } from '../utils/exportPDF';
 import ConfirmModal from '../components/ConfirmModal';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 type MenuTab = 'general' | 'profile' | 'data' | 'about';
 
@@ -34,6 +35,7 @@ function Settings() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const { t, i18n } = useTranslation();
   const [userCreatedAt, setUserCreatedAt] = useState<string>('');
 
   const menuItems = [
@@ -54,7 +56,7 @@ function Settings() {
           // Format tanggal dibuatnya akun
           const createdAt = new Date(user.created_at || Date.now());
           setUserCreatedAt(
-            new Intl.DateTimeFormat('id-ID', {
+            new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-US' : 'id-ID', {
               day: 'numeric',
               month: 'long',
               year: 'numeric',
@@ -77,11 +79,11 @@ function Settings() {
       }
     };
     fetchUserData();
-  }, []);
+  }, [i18n.language]);
 
   const handleDeleteAll = () => {
     if (totalEntries === 0) {
-      toast.info('Belum ada jurnal untuk dihapus.');
+      toast.info(t('settings.noJournalsToDelete'));
       return;
     }
     setIsConfirmOpen(true);
@@ -100,9 +102,9 @@ function Settings() {
 
       if (error) throw error;
       setTotalEntries(0);
-      toast.success('Semua jurnal berhasil dihapus!');
+      toast.success(t('settings.deleteSuccess'));
     } catch (err: unknown) {
-      toast.error('Gagal menghapus: ' + (err as Error).message);
+      toast.error(t('settings.deleteFailed') + (err as Error).message);
     } finally {
       setIsDeleting(false);
     }
@@ -111,10 +113,10 @@ function Settings() {
 const handleLogout = async () => {
   try {
     await supabase.auth.signOut();
-    toast.success('Berhasil logout!');
+    toast.success(t('layout.logoutSuccess'));
     navigate('/login');
   } catch (err: unknown) {
-    toast.error('Gagal logout: ' + (err as Error).message);
+    toast.error(t('layout.logoutFailed') + (err as Error).message);
   }
 };
 
@@ -131,14 +133,14 @@ const handleLogout = async () => {
 
       if (error) throw error;
       if (!entries || entries.length === 0) {
-        toast.info('Belum ada jurnal untuk diekspor.');
+        toast.info(t('settings.noJournalsToExport'));
         return;
       }
 
       await exportAllEntries(entries);
-      toast.success('Data berhasil diekspor!');
+      toast.success(t('settings.exportSuccess'));
     } catch (err: unknown) {
-      toast.error('Gagal ekspor data: ' + (err as Error).message);
+      toast.error(t('settings.exportFailed') + (err as Error).message);
     }
   };
 
@@ -147,7 +149,7 @@ const handleLogout = async () => {
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="text-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-400">Memuat pengaturan...</p>
+          <p className="text-gray-600 dark:text-gray-400">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -159,7 +161,7 @@ const handleLogout = async () => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <SettingsIcon className="w-6 h-6 text-blue-500" />
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Pengaturan</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{t('settings.title')}</h1>
         </div>
         <Link
           to="/"
@@ -190,7 +192,7 @@ const handleLogout = async () => {
                     }
                   `}
                 >
-                  {item.label}
+                  {t(`settings.tabs.${item.id}`)}
                 </button>
               ))}
             </div>
@@ -198,22 +200,29 @@ const handleLogout = async () => {
             {/* === UMUM === */}
             {activeTab === 'general' && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Umum</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('settings.tabs.general')}</h3>
                 <div className="space-y-3">
                   {/* Bahasa */}
                   <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-slate-700">
                     <div className="flex items-center gap-3">
                       <Globe className="w-5 h-5 text-gray-500" />
-                      <span className="text-gray-700 dark:text-gray-300">Bahasa</span>
+                      <span className="text-gray-700 dark:text-gray-300">{t('settings.language')}</span>
                     </div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Indonesia</span>
+                    <select
+                      value={i18n.language}
+                      onChange={(e) => i18n.changeLanguage(e.target.value)}
+                      className="px-3 py-1.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm cursor-pointer"
+                    >
+                      <option value="id">Indonesia</option>
+                      <option value="en">English</option>
+                    </select>
                   </div>
 
                   {/* Tema */}
                   <div className="py-2 border-b border-gray-100 dark:border-slate-700">
                     <div className="flex items-center gap-3 mb-2">
                       <Sun className="w-5 h-5 text-gray-500" />
-                      <span className="text-gray-700 dark:text-gray-300">Tema</span>
+                      <span className="text-gray-700 dark:text-gray-300">{t('settings.theme')}</span>
                     </div>
                     <div className="flex gap-2 pl-8">
                       <button
@@ -225,7 +234,7 @@ const handleLogout = async () => {
                         }`}
                       >
                         <Sun className="w-4 h-4" />
-                        <span>Terang</span>
+                        <span>{t('settings.light')}</span>
                         {theme === 'light' && <span className="text-blue-500 text-xs">✓</span>}
                       </button>
                       <button
@@ -237,7 +246,7 @@ const handleLogout = async () => {
                         }`}
                       >
                         <Moon className="w-4 h-4" />
-                        <span>Gelap</span>
+                        <span>{t('settings.dark')}</span>
                         {theme === 'dark' && <span className="text-blue-500 text-xs">✓</span>}
                       </button>
                     </div>
@@ -249,7 +258,7 @@ const handleLogout = async () => {
             {/* === PROFIL === */}
             {activeTab === 'profile' && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Profil</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('settings.tabs.profile')}</h3>
                 <div className="space-y-4">
                   {/* Avatar & Info */}
                   <div className="flex items-center gap-4 min-w-0">
@@ -268,12 +277,12 @@ const handleLogout = async () => {
                   {/* Total Jurnal */}
                   <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2 py-2 border-b border-gray-100 dark:border-slate-700">
                     <Calendar className="w-4 h-4" />
-                    Total Jurnal: <strong className="text-gray-700 dark:text-gray-300">{totalEntries}</strong>
+                    {t('settings.totalJournals')}: <strong className="text-gray-700 dark:text-gray-300">{totalEntries}</strong>
                   </div>
                   {/* ===== TANGGAL DIBUAT AKUN ===== */}
                   <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2 py-2 border-b border-gray-100 dark:border-slate-700">
                     <Calendar className="w-4 h-4" />
-                    Akun dibuat: <strong className="text-gray-700 dark:text-gray-300">{userCreatedAt || 'Belum tersedia'}</strong>
+                      {t('settings.accountCreated')}: <strong className="text-gray-700 dark:text-gray-300">{userCreatedAt || t('settings.notAvailable')}</strong>
                   </div>
                     
                   {/* ===== LOGOUT ===== */}
@@ -287,8 +296,8 @@ const handleLogout = async () => {
                           <LogOut className="w-5 h-5 text-red-600 dark:text-red-400" />
                         </div>
                         <div className="text-left">
-                          <p className="text-sm font-medium text-red-600 dark:text-red-400">Logout</p>
-                          <p className="text-xs text-red-500 dark:text-red-400">Keluar dari akun ini</p>
+                          <p className="text-sm font-medium text-red-600 dark:text-red-400">{t('layout.logout')}</p>
+                          <p className="text-xs text-red-500 dark:text-red-400">{t('settings.logoutDesc')}</p>
                         </div>
                       </div>
                       <ArrowRight className="w-5 h-5 text-red-400 group-hover:text-red-600 dark:group-hover:text-red-400 transition" />
@@ -301,7 +310,7 @@ const handleLogout = async () => {
             {/* === DATA === */}
             {activeTab === 'data' && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Data</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('settings.tabs.data')}</h3>
                 <div className="space-y-3">
                   <button
                     onClick={handleExportAll}
@@ -309,7 +318,7 @@ const handleLogout = async () => {
                     className="flex items-center gap-2 w-full justify-center px-4 py-2.5 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/40 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                   >
                     <Download className="w-5 h-5" />
-                    <span>Ekspor Semua Data ({totalEntries} jurnal)</span>
+                    <span>{t('settings.exportAllData')} ({totalEntries} {t('settings.journals')})</span>
                   </button>
                   <button
                     onClick={handleDeleteAll}
@@ -317,10 +326,10 @@ const handleLogout = async () => {
                     className="flex items-center gap-2 w-full justify-center px-4 py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/40 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                   >
                     <Trash2 className="w-5 h-5" />
-                    <span>{isDeleting ? 'Menghapus...' : `Hapus Semua Jurnal`}</span>
+                    <span>{isDeleting ? t('settings.deleting') : t('settings.deleteAllJournals')}</span>
                   </button>
                   <p className="text-xs text-red-500 dark:text-red-400 text-center">
-                    Tindakan ini tidak bisa dibatalkan. Dan terhapus permanent
+                    {t('settings.deleteWarning')}
                   </p>
                 </div>
               </div>
@@ -329,14 +338,14 @@ const handleLogout = async () => {
             {/* === TENTANG === */}
             {activeTab === 'about' && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tentang</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('settings.tabs.about')}</h3>
                 <div className="space-y-3 text-gray-700 dark:text-gray-300">
-                  <p><strong>Journal App</strong> — Aplikasi jurnal harian modern.</p>
+                  <p><strong>Journal App</strong> — {t('settings.aboutDesc')}</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Dibuat oleh Feri.
+                    {t('settings.createdBy')} Feri.
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Versi: <span className="font-mono">1.5.0</span>
+                    {t('settings.version')}: <span className="font-mono">1.5.0</span>
                   </p>
                 </div>
               </div>
@@ -347,15 +356,15 @@ const handleLogout = async () => {
 
       {/* Confirm Modal */}
       <ConfirmModal
-        isOpen={isConfirmOpen}
-        onClose={() => setIsConfirmOpen(false)}
-        onConfirm={confirmDeleteAll}
-        title="Hapus Semua Jurnal?"
-        message={`Jurnal yang tersedia ${totalEntries}, termasuk yang sudah di Arsipkan.`}
-        confirmText="Ya, Hapus Semua"
-        cancelText="Batal"
-        type="danger"
-      />
+      isOpen={isConfirmOpen}
+      onClose={() => setIsConfirmOpen(false)}
+      onConfirm={confirmDeleteAll}
+      title={t('settings.deleteAllTitle')}
+      message={t('settings.deleteAllMessage', { count: totalEntries })}
+      confirmText={t('settings.yesDeleteAll')}
+      cancelText={t('common.cancel')}
+      type="danger"
+    />
     </div>
   );
 }

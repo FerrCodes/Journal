@@ -26,7 +26,7 @@ function Login() {
 
     if (error) {
       console.error('Supabase error:', error);
-      toast.error('Email atau password salah!');
+      toast.error(t('auth.loginFailed'));
       return;
     }
 
@@ -42,13 +42,12 @@ function Login() {
         console.log('Activity log tercatat!');
       } catch (logError) {
         console.warn('Gagal mencatat aktivitas:', logError);
-        // Abaikan error, login tetap berhasil
       }
 
-      toast.success('Login berhasil!');
+      toast.success(t('auth.loginSuccess'));
       navigate('/');
     } else {
-      toast.error('Email atau password salah!');
+      toast.error(t('auth.loginFailed'));
     }
   } catch (err) {
     console.error('Login error:', err);

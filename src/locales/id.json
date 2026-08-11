@@ -1,5 +1,6 @@
 {
     "settings": {
+    "logoutDesc": "Keluar dari akun ini",
     "title": "Pengaturan",
     "tabs": {
       "general": "Umum",
@@ -43,7 +44,7 @@
     "edit": "Edit",
     "loading": "Memuat..."
   },
-  "auth": {
+    "auth": {
     "welcome": "Selamat Datang",
     "loginDesc": "Lanjutkan progres Jurnal baru dan mengelola catatan harian!",
     "email": "Email",
@@ -56,7 +57,11 @@
     "registerDesc": "Buat akun dan mulai membuat Jurnal baru!",
     "registerBtn": "Daftar",
     "hasAccount": "Sudah punya akun?",
-    "loginNow": "Masuk Sekarang"
+    "loginNow": "Masuk Sekarang",
+    "loginFailed": "Email atau password salah!",
+    "loginSuccess": "Login berhasil!",
+    "registerSuccess": "Registrasi berhasil! Silakan login.",
+    "registerFailed": "Registrasi gagal"
   },
   "modal": {
     "aboutTitle": "Tentang Journal App",

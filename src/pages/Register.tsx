@@ -27,11 +27,11 @@ function Register() {
         password,
       });
       if (error) throw error;
-      toast.success('Registrasi berhasil! Silakan login.');
+      toast.success(t('auth.registerSuccess'));
       navigate('/login');
     } catch (err: unknown) {
       setError((err as Error).message);
-      toast.error('Registrasi gagal: ' + (err as Error).message);
+      toast.error(t('auth.registerFailed') + ': ' + (err as Error).message);
     } finally {
       setLoading(false);
     }

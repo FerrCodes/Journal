@@ -10,7 +10,7 @@
     "edit": "Edit",
     "loading": "Loading..."
   },
-  "auth": {
+    "auth": {
     "welcome": "Welcome",
     "loginDesc": "Continue your journal progress and manage daily notes!",
     "email": "Email",
@@ -23,7 +23,11 @@
     "registerDesc": "Create an account and start journaling!",
     "registerBtn": "Sign Up",
     "hasAccount": "Already have an account?",
-    "loginNow": "Sign In Now"
+    "loginNow": "Sign In Now",
+    "loginFailed": "Invalid email or password!",
+    "loginSuccess": "Login successful!",
+    "registerSuccess": "Registration successful! Please sign in.",
+    "registerFailed": "Registration failed"
   },
   "modal": {
     "aboutTitle": "About Journal App",
@@ -85,6 +89,7 @@
     "5": "Mind Blown!"
   },
    "settings": {
+    "logoutDesc": "Sign out from this account",
     "title": "Settings",
     "tabs": {
       "general": "General",

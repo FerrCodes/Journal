@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
-import { useState } from 'react'; // ← Tambahkan import useState
+import { useState } from 'react';
 import { useTheme } from './context/ThemeContext';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
@@ -12,6 +12,7 @@ import Calendar from './pages/Calendar';
 import Archive from './pages/Archive';
 import Settings from './pages/Settings';
 import Activity from './pages/Activity';
+import './i18n';
 import Login from './pages/Login';
 import Register from './pages/Register';
 

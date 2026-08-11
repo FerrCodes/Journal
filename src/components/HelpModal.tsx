@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { X, Mail, MessageSquare, Info } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface HelpModalProps {
   isOpen: boolean;
@@ -7,6 +8,7 @@ interface HelpModalProps {
 }
 
 function HelpModal({ isOpen, onClose }: HelpModalProps) {
+  const { t } = useTranslation();
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -31,7 +33,7 @@ function HelpModal({ isOpen, onClose }: HelpModalProps) {
         <div className="px-6 py-4 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between">
           <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
             <Info className="w-5 h-5 text-purple-500" />
-            Feedback
+            {t('help.title')}
           </h2>
           <button
             onClick={onClose}
@@ -44,7 +46,7 @@ function HelpModal({ isOpen, onClose }: HelpModalProps) {
         {/* Body */}
         <div className="p-6 space-y-4">
           <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-            Punya pertanyaan, menemukan bug, atau ingin memberikan saran fitur untuk Journal App? Hubungi dibawah ini
+            {t('help.desc')}
           </p>
 
           <div className="space-y-2">
@@ -57,7 +59,7 @@ function HelpModal({ isOpen, onClose }: HelpModalProps) {
                 <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Email</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t('help.email')}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">ferdiantoferi1303@gmail.com</p>
               </div>
             </a>
@@ -72,7 +74,7 @@ function HelpModal({ isOpen, onClose }: HelpModalProps) {
               </div>
               <div className="text-left">
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Discord</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Segera hadir</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{t('help.comingSoon')}</p>
               </div>
             </button>
           </div>
@@ -81,7 +83,7 @@ function HelpModal({ isOpen, onClose }: HelpModalProps) {
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50 dark:bg-slate-800/50 border-t border-gray-200 dark:border-slate-700 text-center">
           <p className="text-xs text-gray-400 dark:text-gray-500">
-            Journal App v1.5.0 • Dibuat oleh Feri
+            Journal App v1.5.0 • {t('help.createdBy')} Feri
           </p>
         </div>
       </div>

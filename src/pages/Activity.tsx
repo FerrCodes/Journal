@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { format } from 'date-fns';
-import { id } from 'date-fns/locale';
+import { id, enUS } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
 import { 
   Activity, 
   LogIn, 
@@ -31,6 +32,7 @@ function ActivityPage() {
   const [loading, setLoading] = useState(true);
   const [lastLogin, setLastLogin] = useState<string | null>(null);
   const [lastLogout, setLastLogout] = useState<string | null>(null);
+  const { t, i18n } = useTranslation();
 
   const fetchActivities = async () => {
     try {
@@ -113,16 +115,11 @@ function ActivityPage() {
 
   const getActionLabel = (action: string) => {
     switch (action) {
-      case 'create':
-        return 'Membuat jurnal';
-      case 'update':
-        return 'Mengedit jurnal';
-      case 'delete':
-        return 'Menghapus jurnal';
-      case 'login':
-        return 'Login';
-      case 'logout':
-        return 'Logout';
+      case 'create': return t('activity.create');
+      case 'update': return t('activity.update');
+      case 'delete': return t('activity.delete');
+      case 'login': return t('activity.login');   
+      case 'logout': return t('activity.logout');
       default:
         return action;
     }
@@ -148,13 +145,13 @@ function ActivityPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-gray-500 dark:text-gray-400">Memuat aktivitas...</div>
+        <div className="text-gray-500 dark:text-gray-400">{t('common.loading')}</div>
       </div>
     );
   }
 
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'EEEE, d MMMM yyyy, HH:mm', { locale: id });
+    return format(new Date(dateString), 'EEEE, d MMMM yyyy, HH:mm', { locale: i18n.language === 'en' ? enUS : id });
   };
 
   return (
@@ -162,7 +159,7 @@ function ActivityPage() {
       <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Activity className="w-6 h-6 text-blue-500" />
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">Aktivitas</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">{t('activity.title')}</h1>
           </div>
           <Link 
             to="/" 
@@ -181,7 +178,7 @@ function ActivityPage() {
               <LogIn className="w-5 h-5 text-green-500" />
             </div>
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Terakhir Login</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t('activity.lastLogin')}</p>
               <p className="text-sm text-gray-900 dark:text-gray-100 font-medium">
                 {lastLogin ? formatDate(lastLogin) : 'Belum pernah login'}
               </p>
@@ -195,7 +192,7 @@ function ActivityPage() {
               <LogOut className="w-5 h-5 text-orange-500" />
             </div>
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Terakhir Logout</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t('activity.lastLogout')}</p>
               <p className="text-sm text-gray-900 dark:text-gray-100 font-medium">
                 {lastLogout ? formatDate(lastLogout) : 'Belum pernah logout'}
               </p>
@@ -208,8 +205,8 @@ function ActivityPage() {
       {activities.length === 0 ? (
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-8 text-center">
           <Activity className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-500 dark:text-gray-400">Tidak ada aktivitas.</p>
-          <p className="text-sm text-gray-400 dark:text-gray-500">Mulailah mencoba membuat Jurnal baru dan edit.</p>
+          <p className="text-gray-500 dark:text-gray-400">{t('activity.emptyTitle')}</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">{t('activity.emptyDesc')}</p>
         </div>
       ) : (
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 divide-y divide-gray-100 dark:divide-slate-700">

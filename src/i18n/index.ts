@@ -2,12 +2,17 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-import id from '../locales/id.json';
-import en from '../locales/en.json';
+// Import kamus bahasa
+import translationID from '../locales/id.json';
+import translationEN from '../locales/en.json';
 
 const resources = {
-  id: { translation: id },
-  en: { translation: en },
+  id: {
+    translation: translationID,
+  },
+  en: {
+    translation: translationEN,
+  },
 };
 
 i18n
@@ -18,6 +23,10 @@ i18n
     fallbackLng: 'id',
     interpolation: {
       escapeValue: false,
+    },
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage'],
     },
   });
 

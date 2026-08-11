@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
-import { useReminder } from '../hooks/useReminder';
 import { supabase } from '../services/supabase';
 import { toast } from 'sonner'
 import {
@@ -8,8 +7,6 @@ import {
   Mail,
   Moon,
   Sun,
-  Bell,
-  Clock,
   Database,
   Download,
   Trash2,
@@ -20,10 +17,6 @@ import {
   Globe,
   LogOut,
   ArrowRight,
-  CheckCircle,
-  CircleSlash,
-  XCircle,
-  AlertCircle
 } from 'lucide-react';
 import { exportAllEntries } from '../utils/exportPDF';
 import ConfirmModal from '../components/ConfirmModal';
@@ -34,7 +27,6 @@ type MenuTab = 'general' | 'profile' | 'data' | 'about';
 function Settings() {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const { settings, permission, requestPermission, saveSettings } = useReminder();
   const [activeTab, setActiveTab] = useState<MenuTab>('general');
   const [userEmail, setUserEmail] = useState('');
   const [userName, setUserName] = useState('');
@@ -250,115 +242,6 @@ const handleLogout = async () => {
                       </button>
                     </div>
                   </div>
-
-                  {/* Notifikasi */}
-                  <div className="py-2 border-b border-gray-100 dark:border-slate-700">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Bell className="w-5 h-5 text-gray-500" />
-                        <span className="text-gray-700 dark:text-gray-300">Notifikasi</span>
-                      </div>
-                      <button
-                        onClick={() => {
-                          if (!settings.enabled && permission !== 'granted') {
-                            requestPermission();
-                          }
-                          saveSettings({ ...settings, enabled: !settings.enabled });
-                        }}
-                        className={`w-11 h-6 rounded-full transition ${
-                          settings.enabled ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
-                        }`}
-                      >
-                        <div
-                          className={`w-5 h-5 bg-white rounded-full transition-transform shadow-sm ${
-                            settings.enabled ? 'translate-x-5' : 'translate-x-0.5'
-                          } mt-0.5`}
-                        />
-                      </button>
-                    </div>
-                        
-                    {/* Deskripsi Notifikasi */}
-                    <div className="mt-2 pl-8 space-y-1">
-                      {/* Status aktif/nonaktif */}
-                      <div className="flex items-center gap-1.5">
-                        {settings.enabled ? (
-                          <>
-                            <CheckCircle className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
-                            <span className="text-xs text-green-600 dark:text-green-400 font-medium">Notifikasi aktif</span>
-                          </>
-                        ) : (
-                          <>
-                            <CircleSlash className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
-                            <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">Notifikasi nonaktif</span>
-                          </>
-                        )}
-                      </div>
-                      
-                      {/* Deskripsi fungsi */}
-                      <p className="text-[10px] text-gray-400 dark:text-slate-300 leading-relaxed">
-                        {settings.enabled
-                          ? '🔔 Kamu akan mendapat pengingat setiap hari pukul '
-                          : '🔕 Aktifkan notifikasi jika ingin mengingat membuat Jurnal baru'}
-                        {settings.enabled && (
-                          <span className="font-medium text-gray-500 dark:text-gray-400">
-                            {settings.hour.toString().padStart(2, '0')}:
-                            {settings.minute.toString().padStart(2, '0')}
-                          </span>
-                        )}
-                        {settings.enabled && ' WIB.'}
-                      </p>
-                      
-                      {/* Status izin */}
-                      <div className="flex items-center gap-1.5 pt-0.5">
-                        {permission === 'granted' ? (
-                          <>
-                            <CheckCircle className="w-3 h-3 text-green-500" />
-                            <span className="text-[10px] text-green-500">Izin notifikasi diberikan</span>
-                          </>
-                        ) : permission === 'denied' ? (
-                          <>
-                            <XCircle className="w-3 h-3 text-red-500" />
-                            <span className="text-[10px] text-red-500">Izin notifikasi ditolak. Izinkan di pengaturan browser/HP.</span>
-                          </>
-                        ) : (
-                          <>
-                            <AlertCircle className="w-3 h-3 text-yellow-500" />
-                            <span className="text-[10px] text-yellow-500">Belum minta izin notifikasi. Klik toggle untuk meminta izin.</span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  {settings.enabled && (
-                    <div className="flex items-center gap-3 py-1 pl-8">
-                      <Clock className="w-4 h-4 text-gray-500" />
-                      <div className="flex items-center gap-2">
-                        <select
-                          value={settings.hour}
-                          onChange={(e) => saveSettings({ ...settings, hour: Number(e.target.value) })}
-                          className="px-2 py-1 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                        >
-                          {Array.from({ length: 24 }, (_, i) => (
-                            <option key={i} value={i}>
-                              {i.toString().padStart(2, '0')}
-                            </option>
-                          ))}
-                        </select>
-                        <span className="text-gray-500 dark:text-gray-400">:</span>
-                        <select
-                          value={settings.minute}
-                          onChange={(e) => saveSettings({ ...settings, minute: Number(e.target.value) })}
-                          className="px-2 py-1 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                        >
-                          {[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].map((m) => (
-                            <option key={m} value={m}>
-                              {m.toString().padStart(2, '0')}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             )}
@@ -434,7 +317,7 @@ const handleLogout = async () => {
                     className="flex items-center gap-2 w-full justify-center px-4 py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/40 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                   >
                     <Trash2 className="w-5 h-5" />
-                    <span>{isDeleting ? 'Menghapus...' : `Hapus Semua Jurnal (${totalEntries})`}</span>
+                    <span>{isDeleting ? 'Menghapus...' : `Hapus Semua Jurnal`}</span>
                   </button>
                   <p className="text-xs text-red-500 dark:text-red-400 text-center">
                     Tindakan ini tidak bisa dibatalkan. Dan terhapus permanent

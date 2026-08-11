@@ -6,6 +6,7 @@ import type { JournalEntry } from '../types/journal';
 import { MOOD_OPTIONS } from '../types/journal';
 import { Skeleton } from '../components/Skeleton';
 import ConfirmModal from '../components/ConfirmModal';
+import { useTranslation } from 'react-i18next';
 import { 
   Pencil, 
   Trash2, 
@@ -42,6 +43,7 @@ function DetailEntry() {
   const [isImageConfirmOpen, setIsImageConfirmOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { t, i18n } = useTranslation();
   const [isDeleteAllImagesOpen, setIsDeleteAllImagesOpen] = useState(false);
 
   // ===== FETCH IMAGES (DI LUAR fetchEntry) =====
@@ -131,13 +133,12 @@ function DetailEntry() {
   };
 
   const getMoodLabel = (mood: number) => {
-    const found = MOOD_OPTIONS.find((m) => m.value === mood);
-    return found ? found.label : 'Biasa Aja';
+    return t(`moods.${mood}`);
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('id-ID', {
+    return new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-US' : 'id-ID', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -308,7 +309,7 @@ const confirmDeleteAllImages = async () => {
           ❌ {error}
           <Link to="/" className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 mb-4 flex items-center gap-1 text-sm sm:text-base">
             <ArrowLeft className="w-4 h-4" />
-            Kembali ke Dashboard
+            {t('common.backToDashboard')}
           </Link>
         </div>
       </div>
@@ -318,10 +319,10 @@ const confirmDeleteAllImages = async () => {
   if (!entry) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8 text-center">
-        <p className="text-gray-700 dark:text-gray-300">Entri tidak ditemukan.</p>
+        <p className="text-gray-700 dark:text-gray-300">{t('detail.entryNotFound')}</p>
         <Link to="/" className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 inline-flex items-center gap-1 mt-3">
           <ArrowLeft className="w-4 h-4" />
-          Kembali ke Dashboard
+          {t('common.backToDashboard')}
         </Link>
       </div>
     );
@@ -332,13 +333,13 @@ const confirmDeleteAllImages = async () => {
       <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <FileText className="w-6 h-6 text-blue-500" />
-            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">Detail Jurnal</h1>
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">{t('detail.title')}</h1>
           </div>
           <Link 
             to="/"
             className="inline-flex items-center gap-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-sm"
           >
-            <span className="hidden sm:inline">← Kembali ke Dashboard</span>
+            <span className="hidden sm:inline">← {t('common.backToDashboard')}</span>
             <span className="sm:hidden">←</span>
           </Link>
         </div>
@@ -353,7 +354,7 @@ const confirmDeleteAllImages = async () => {
           }`}
         >
           <Star className={`w-3 h-3 sm:w-4 sm:h-4 ${entry.is_favorite ? 'fill-white' : ''}`} />
-          <span>{entry.is_favorite ? 'Hapus' : 'Tambah Favorit'}</span>
+          {entry.is_favorite ? t('detail.removeFavorite') : t('detail.addFavorite')}
         </button>
         <button onClick={() => exportSingleEntry(entry)} className="bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg transition flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
           <FileDown className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -376,7 +377,7 @@ const confirmDeleteAllImages = async () => {
           ) : (
             <Archive className="w-3 h-3 sm:w-4 sm:h-4" />
           )}
-          <span>{entry.is_archived ? 'Kembalikan' : 'Arsipkan'}</span>
+          {entry.is_archived ? t('detail.restore') : t('detail.archive')}
         </button>
         <div className="relative" ref={dropdownRef}>
           <button
@@ -387,7 +388,7 @@ const confirmDeleteAllImages = async () => {
             className="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white px-2 py-1 sm:px-4 sm:py-2 rounded-lg transition flex items-center justify-center gap-1 sm:gap-2 text-[10px] sm:text-sm"
           >
             <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="truncate">Hapus</span>
+            <span className="truncate">{t('common.delete')}</span>
             <ChevronDown className="w-3 h-3" />
           </button>
           
@@ -402,7 +403,7 @@ const confirmDeleteAllImages = async () => {
                 className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition flex items-center gap-2"
               >
                 <Trash2 className="w-4 h-4" />
-                Hapus Jurnal
+                {t('detail.deleteJournal')}
               </button>
               <button
                 onClick={() => {
@@ -412,7 +413,7 @@ const confirmDeleteAllImages = async () => {
                 className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition flex items-center gap-2"
               >
                 <Image className="w-4 h-4" />
-                Hapus Semua Foto ({images.length})
+                {t('detail.deleteAllPhotos')} ({images.length})
               </button>
             </div>
           )}
@@ -427,11 +428,11 @@ const confirmDeleteAllImages = async () => {
             <div>
               <div className="flex items-center sm:gap-3">
                 <h2 className="text-4xl sm:text-5xl font-bold mt-4 text-gray-900 dark:text-gray-100 break-words">
-                  {entry.title || 'Tanpa Judul'}
+                 {entry.title || t('dashboard.untitled')}
                 </h2>
               </div>
               <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
-                Mood: {getMoodEmoji(entry.mood)} {getMoodLabel(entry.mood)}
+                {t('detail.mood')}: {getMoodEmoji(entry.mood)} {getMoodLabel(entry.mood)}
               </p>
             </div>
           </div>
@@ -449,7 +450,7 @@ const confirmDeleteAllImages = async () => {
                 <Cloud className="w-3 h-3 sm:w-4 sm:h-4 text-gray-700 dark:text-gray-300" />
                 <button onClick={() => { setSelectedDate(formatDateInput(entry.created_at)); setSelectedTime(formatTimeInput(entry.created_at)); setEditDate(true); }} className="px-2 py-0.5 sm:px-3 sm:py-1 bg-blue-500 hover:bg-blue-600 text-white text-[10px] sm:text-xs rounded-lg transition flex items-center gap-0.5 sm:gap-1">
                   <Calendar className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                  Ubah
+                  {t('detail.change')}
                 </button>
               </div>
             ) : (
@@ -470,20 +471,20 @@ const confirmDeleteAllImages = async () => {
                   type="text"
                   value={weather}
                   onChange={(e) => setWeather(e.target.value)}
-                  placeholder="Cuaca"
+                  placeholder={t('journal.weatherLabel')}
                   className="px-2 py-0.5 sm:px-3 sm:py-1 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-xs sm:text-sm placeholder-gray-400 dark:placeholder-gray-500 w-20 sm:w-24"
                 />
                 <button
                   onClick={() => handleUpdateDate(selectedDate)}
                   className="px-2 py-0.5 sm:px-3 sm:py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs sm:text-sm transition"
                 >
-                  Simpan
+                  {t('common.save')}
                 </button>
                 <button
                   onClick={() => setEditDate(false)}
                   className="px-2 py-0.5 sm:px-3 sm:py-1 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-xs sm:text-sm transition"
                 >
-                  Batal
+                  {t('common.cancel')}
                 </button>
               </div>
             )}
@@ -501,7 +502,7 @@ const confirmDeleteAllImages = async () => {
             <div className="p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border-l-4 border-blue-500 dark:border-blue-400">
               <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-2 flex items-center gap-2 text-sm sm:text-base">
                 <Music className="w-4 h-4" />
-                Lagu Favorit Hari Ini
+                {t('detail.favoriteSongToday')}
               </h4>
               <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base">
                 <strong>{entry.song_title}</strong>
@@ -510,7 +511,7 @@ const confirmDeleteAllImages = async () => {
               {entry.song_url && (
                 <a href={entry.song_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 text-xs sm:text-sm mt-1 flex items-center gap-1">
                   <Music className="w-3 h-3 sm:w-4 sm:h-4" />
-                  Dengarkan di Spotify/YouTube
+                  {t('detail.listenOnSpotify')}
                 </a>
               )}
             </div>
@@ -521,7 +522,7 @@ const confirmDeleteAllImages = async () => {
             <div className="mt-4">
               <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                 <Image className="w-4 h-4" />
-                Foto ({images.length})
+                {t('detail.photos')} ({images.length})
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                 {images.map((img) => (
@@ -569,33 +570,30 @@ const confirmDeleteAllImages = async () => {
             isOpen={isConfirmOpen}
             onClose={() => setIsConfirmOpen(false)}
             onConfirm={confirmDelete}
-            title="Hapus Jurnal"
-            message={`Apakah kamu yakin ingin menghapus jurnal "${entry?.title || 'Tanpa Judul'}" ini?`}
-            confirmText="Ya, Hapus"
-            cancelText="Batal"
+            title={t('detail.deleteJournal')}
+            message={t('detail.confirmDeleteJournal', { title: entry?.title || t('dashboard.untitled') })}
+            confirmText={t('detail.yesDelete')}
+            cancelText={t('common.cancel')}
             type="danger"
           />
           <ConfirmModal
             isOpen={isImageConfirmOpen}
-            onClose={() => {
-              setIsImageConfirmOpen(false);
-              setImageToDelete(null);
-            }}
+            onClose={() => { setIsImageConfirmOpen(false); setImageToDelete(null); }}
             onConfirm={confirmDeleteImage}
-            title="Hapus Foto"
-            message="Yakin ingin menghapus foto ini?"
-            confirmText="Ya, Hapus"
-            cancelText="Batal"
+            title={t('detail.deletePhoto')}
+            message={t('detail.confirmDeletePhoto')}
+            confirmText={t('detail.yesDelete')}
+            cancelText={t('common.cancel')}
             type="danger"
           />
           <ConfirmModal
             isOpen={isDeleteAllImagesOpen}
             onClose={() => setIsDeleteAllImagesOpen(false)}
             onConfirm={confirmDeleteAllImages}
-            title="Hapus Semua Foto dari Jurnal"
-            message={`Yakin ingin menghapus semua foto dari Jurnal ini?`}
-            confirmText="Ya, Hapus Semua"
-            cancelText="Batal"
+            title={t('detail.deleteAllPhotosTitle')}
+            message={t('detail.confirmDeleteAllPhotos')}
+            confirmText={t('detail.yesDeleteAll')}
+            cancelText={t('common.cancel')}
             type="danger"
           />
 

@@ -6,6 +6,7 @@ import { MOOD_OPTIONS } from '../types/journal';
 import type { MoodValue } from '../types/journal';
 import { Pencil, Save, Tag, Upload, X, Image, Loader2, Music, Cloud } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import { useTranslation } from 'react-i18next';
 
 function EditEntry() {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +27,7 @@ function EditEntry() {
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [newPreviews, setNewPreviews] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const { t } = useTranslation();
 
     useEffect(() => {
     const fetchEntry = async () => {
@@ -138,11 +140,11 @@ function EditEntry() {
         if (imageError) throw imageError;
       }
 
-      toast.success('Jurnal berhasil diperbarui!');
+      toast.success(t('journal.updateSuccess'));
       navigate(`/entry/${id}`);
     } catch (err: unknown) {
       setError((err as Error).message);
-      toast.error('Gagal memperbarui jurnal: ' + (err as Error).message);
+      toast.error(t('journal.updateFailed') + (err as Error).message);
     } finally {
       setSaving(false);
       setUploading(false);
@@ -153,8 +155,7 @@ function EditEntry() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
     if (selectedFiles.length + newFiles.length + existingImages.length > 3) {
-      toast.warning('Maksimal 3 foto per jurnal.');
-      return;
+      toast.warning(t('journal.maxPhotos'));
     }
     setNewFiles([...newFiles, ...selectedFiles]);
     const previews = selectedFiles.map((file) => URL.createObjectURL(file));
@@ -183,9 +184,9 @@ function EditEntry() {
       await supabase.storage.from('entry-images').remove([filePath]);
 
       setExistingImages(existingImages.filter((img) => img.id !== imageId));
-      toast.success('Foto berhasil dihapus!');
+      toast.success(t('journal.photoDeleted'));
     } catch (err: unknown) {
-      toast.error('Gagal hapus foto: ' + (err as Error).message);
+      toast.error(t('journal.photoDeleteFailed') + (err as Error).message);
     }
   };
 
@@ -219,7 +220,7 @@ function EditEntry() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-400">Memuat data jurnal...</p>
+          <p className="text-gray-600 dark:text-gray-400">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -234,7 +235,7 @@ function EditEntry() {
             to="/"
             className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition text-sm font-medium"
           >
-            ← Kembali ke Dashboard
+            ← {t('common.backToDashboard')}
           </Link>
         </div>
       </div>
@@ -248,15 +249,13 @@ function EditEntry() {
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div className="flex items-center gap-2">
             <Pencil className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
-              Edit Jurnal
-            </h1>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">{t('journal.editEntry')}</h1>
           </div>
           <Link
             to={`/entry/${id}`}
             className="inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-xs sm:text-sm"
           >
-            <span className="hidden sm:inline">← Kembali ke Detail</span>
+            <span className="hidden sm:inline">← {t('common.backToDetail')}</span>
             <span className="sm:hidden">← Kembali</span>
           </Link>
         </div>
@@ -265,13 +264,13 @@ function EditEntry() {
           {/* Judul */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-              Judul <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
+              {t('journal.titleOptional')}
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Masukkan judul jurnal..."
+              placeholder={t('journal.titlePlaceholder')}
               className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
           </div>
@@ -279,14 +278,14 @@ function EditEntry() {
           {/* Isi Jurnal */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-              Isi Jurnal <span className="text-red-500">*</span>
+              {t('journal.contentLabel')} <span className="text-red-500">*</span>
             </label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
               rows={6}
-              placeholder="Ceritakan pengalaman hari ini..."
+              placeholder={t('journal.contentPlaceholder')}
               className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-y text-sm sm:text-base"
             />
           </div>
@@ -294,7 +293,7 @@ function EditEntry() {
           {/* Mood */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Mood Hari Ini <span className="text-red-500">*</span>
+              {t('journal.moodLabel')} <span className="text-red-500">*</span>
             </label>
             <div className="flex flex-wrap gap-2">
               {MOOD_OPTIONS.map((option) => (
@@ -308,7 +307,7 @@ function EditEntry() {
                       : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600'
                   }`}
                 >
-                  {option.emoji} {option.label}
+                  {option.emoji} {t(`moods.${option.value}`)}
                 </button>
               ))}
             </div>
@@ -318,28 +317,28 @@ function EditEntry() {
           <div className="border-t border-gray-200 dark:border-slate-700 pt-6">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-1">
               <Music className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              Lagu Favorit <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
+              {t('journal.songLabel')} <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
             </label>
             <div className="space-y-3">
               <input
                 type="text"
                 value={songTitle}
                 onChange={(e) => setSongTitle(e.target.value)}
-                placeholder="Judul lagu..."
+                placeholder={t('journal.songTitlePlaceholder')}
                 className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
               />
               <input
                 type="text"
                 value={songArtist}
                 onChange={(e) => setSongArtist(e.target.value)}
-                placeholder="Nama artis..."
+                placeholder={t('journal.songArtistPlaceholder')}
                 className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
               />
               <input
                 type="url"
                 value={songUrl}
                 onChange={(e) => setSongUrl(e.target.value)}
-                placeholder="Link Spotify / YouTube..."
+                placeholder={t('journal.songUrlPlaceholder')}
                 className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
               />
             </div>
@@ -349,13 +348,13 @@ function EditEntry() {
           <div>
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center gap-1">
               <Cloud className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              Cuaca <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
+              {t('journal.weatherPlaceholder')}
             </label>
             <input
               type="text"
               value={weather}
               onChange={(e) => setWeather(e.target.value)}
-              placeholder="Cerah, Hujan, Mendung..."
+              placeholder={t('journal.weatherPlaceholder')}
               className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
           </div>
@@ -364,7 +363,7 @@ function EditEntry() {
           <div>
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center gap-1">
               <Tag className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              Tags <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
+              {t('journal.tagsLabel')} <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
             </label>
             <div className="flex flex-wrap gap-2">
               <input
@@ -372,7 +371,7 @@ function EditEntry() {
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ketik tag, lalu Enter..."
+                placeholder={t('journal.tagsPlaceholder')}
                 className="w-full max-w-full flex-1 px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
               />
               <button
@@ -380,7 +379,7 @@ function EditEntry() {
                 onClick={handleAddTag}
                 className="px-5 py-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded-xl transition text-sm font-medium whitespace-nowrap"
               >
-                Tambah
+                {t('journal.addTag')}
               </button>
             </div>
             {tags.length > 0 && (
@@ -408,7 +407,7 @@ function EditEntry() {
           <div className="border-t border-gray-200 dark:border-slate-700 pt-6">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-1">
               <Image className="w-4 h-4" />
-              Foto <span className="text-gray-400 dark:text-gray-500">(Opsional, maksimal 3)</span>
+              {t('journal.photoLabel')} <span className="text-gray-400 dark:text-gray-500 ml-1">{t('journal.photoMax')}</span>
             </label>
             
             {/* Foto yang sudah ada di database */}
@@ -458,7 +457,7 @@ function EditEntry() {
             {(newFiles.length + existingImages.length) < 3 && (
               <label className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-xl transition cursor-pointer text-sm font-medium">
                 <Upload className="w-4 h-4" />
-                Pilih Foto
+                {t('journal.choosePhoto')}
                 <input
                   type="file"
                   accept="image/*"
@@ -486,12 +485,12 @@ function EditEntry() {
             {saving || uploading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Menyimpan Perubahan...
+                {t('common.saving')}
               </>
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                Update Jurnal
+                {t('journal.updateJournal')}
               </>
             )}
           </button>

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import type { JournalEntry } from '../types/journal';
 import { MOOD_OPTIONS } from '../types/journal';
+import { useTranslation } from 'react-i18next';
 import { 
   formatDateKey, 
   getDateKey, 
@@ -60,6 +61,7 @@ function Calendar() {
   const [loading, setLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const { t, i18n } = useTranslation();
 
   // Group entries by date
   const entriesByDate = useMemo(() => {
@@ -200,7 +202,7 @@ function Calendar() {
     return (
       <div className="max-w-4xl mx-auto px-3 sm:px-4 py-8 text-center">
         <div className="animate-pulse text-gray-600 dark:text-gray-400">
-          ⏳ Memuat kalender...
+          ⏳ {t('common.loading')}
         </div>
       </div>
     );
@@ -213,7 +215,7 @@ function Calendar() {
           <div className="flex items-center gap-2">
             <CalendarIcon className="w-6 h-6 text-blue-500" />
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              Kalender
+              {t('calendar.title')}
             </h1>
           </div>
           <Link
@@ -226,16 +228,16 @@ function Calendar() {
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-8 text-center">
           <div className="text-6xl mb-4">📝</div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-            Belum Ada Jurnal
+            {t('calendar.noJournalsTitle')}
           </h3>
           <p className="text-gray-600 dark:text-gray-400">
-            Mulai tulis jurnal pertama kamu hari ini!
+            {t('calendar.noJournalsDesc')}
           </p>
           <Link
             to="/new"
             className="inline-block mt-4 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
           >
-            + Buat Jurnal
+            + {t('calendar.createJournal')}
           </Link>
         </div>
       </div>
@@ -249,7 +251,7 @@ function Calendar() {
         <div className="flex items-center gap-2">
           <CalendarIcon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
-            Kalender
+            {t('calendar.title')}
           </h1>
         </div>
         <Link
@@ -271,7 +273,7 @@ function Calendar() {
           <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
         </button>
         <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100">
-          {new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(currentDate)}
+          {new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-US' : 'id-ID', { month: 'long', year: 'numeric' }).format(currentDate)}
         </h2>
         <button
           onClick={nextMonth}
@@ -285,7 +287,10 @@ function Calendar() {
       {/* Grid Kalender */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-3 sm:p-4 md:p-6">
         <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
-          {['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].map((day) => (
+          {(i18n.language === 'en' 
+            ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] 
+            : ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab']
+          ).map((day) => (
             <div 
               key={day} 
               className="text-center text-[10px] sm:text-xs md:text-sm font-semibold text-gray-500 dark:text-gray-400 py-1"
@@ -314,7 +319,7 @@ function Calendar() {
             if (entriesOnDate.length === 0) {
               return (
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Tidak ada jurnal pada tanggal ini.
+                  {t('calendar.noEntriesOnDate')}
                 </p>
               );
             }
@@ -331,7 +336,7 @@ function Calendar() {
                       <span className="text-lg sm:text-xl shrink-0">{getMoodEmoji(entry.mood)}</span>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                          {entry.title || 'Tanpa Judul'}
+                          {entry.title || t('dashboard.untitled')}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 break-words">
                           {entry.content.length > 60 ? entry.content.substring(0, 60) + '...' : entry.content}

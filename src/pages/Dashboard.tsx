@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import type { JournalEntry } from '../types/journal';
 import { MOOD_OPTIONS } from '../types/journal';
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next';
 import { PenSquare, Search, Filter, X, BarChart3, Calendar, Smile, BookOpen, Star, Cloud, Music, ChevronDown, Archive } from 'lucide-react';
 
 function Dashboard() {
@@ -16,6 +17,7 @@ function Dashboard() {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { t, i18n } = useTranslation();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
     const fetchEntries = async () => {
@@ -115,7 +117,7 @@ function Dashboard() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('id-ID', {
+    return new Intl.DateTimeFormat(i18n.language === 'en' ? 'en-US' : 'id-ID', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -175,10 +177,10 @@ function Dashboard() {
       <div className="flex-1 min-w-0">
         <h1 className="text-3xl sm:text-xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2 truncate">
           <BookOpen className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 text-blue-500 flex-shrink-0" />
-          <span className="truncate">Daftar Jurnal</span>
+          <span className="truncate">{t('dashboard.journalList')}</span>
         </h1>
         <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-          {totalEntries} entri • Terakhir: {latestMood ? getMoodEmoji(latestMood) : 'Belum ada'}
+          {totalEntries} {t('dashboard.entries')} • {t('dashboard.last')}: {latestMood ? getMoodEmoji(latestMood) : t('dashboard.none')}
         </p>
       </div>
         <div className="flex items-center gap-2">
@@ -210,7 +212,7 @@ function Dashboard() {
                   }`}
                 >
                   <Star className={`w-4 h-4 ${showFavoritesOnly ? 'fill-yellow-500' : ''}`} />
-                  {showFavoritesOnly ? 'Tampilkan Semua' : 'Tampilkan Favorit'}
+                  {showFavoritesOnly ? t('dashboard.showAll') : t('dashboard.showFavorites')}
                 </button>
                 <Link
                   to="/create"
@@ -221,7 +223,7 @@ function Dashboard() {
                   className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition"
                 >
                   <PenSquare className="w-4 h-4 text-blue-500" />
-                  Tambah Jurnal Baru
+                  {t('dashboard.addNewJournal')}
                 </Link>
                 <Link
                   to="/archive"
@@ -232,7 +234,7 @@ function Dashboard() {
                   className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition"
                 >
                   <Archive className="w-4 h-4 text-gray-500" />
-                  Arsip
+                  {t('dashboard.archive')}
                 </Link>
               </div>
             )}
@@ -252,7 +254,7 @@ function Dashboard() {
           </div>
           <div className="min-w-0">
             <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{totalEntries}</p>
-            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">Total Jurnal</p>
+            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">{t('dashboard.totalJournals')}</p>
           </div>
         </div>
       </div>
@@ -267,7 +269,7 @@ function Dashboard() {
             <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {mostCommonMood ? getMoodEmoji(Number(mostCommonMood)) : '😐'}
             </p>
-            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">Mood Terbanyak</p>
+            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">{t('dashboard.mostCommonMood')}</p>
           </div>
         </div>
       </div>
@@ -282,7 +284,7 @@ function Dashboard() {
             <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {Object.keys(moodCount).length}
             </p>
-            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">Variasi Mood</p>
+            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">{t('dashboard.moodVariation')}</p>
           </div>
         </div>
       </div>
@@ -297,7 +299,7 @@ function Dashboard() {
             <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {entries.filter(e => e.tags && e.tags.length > 0).length}
             </p>
-            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">Dengan Tag</p>
+            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">{t('dashboard.withTags')}</p>
                   </div>
                 </div>
               </div>
@@ -314,7 +316,7 @@ function Dashboard() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari jurnal..."
+              placeholder={t('dashboard.searchPlaceholder')}
               className="w-full pl-8 sm:pl-9 pr-3 sm:pr-4 py-2 sm:py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none transition text-sm"
             />
           </div>
@@ -323,10 +325,10 @@ function Dashboard() {
             onChange={(e) => setSelectedMood(e.target.value ? Number(e.target.value) : null)}
             className="flex-1 sm:flex-none w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none transition text-sm"
           >
-            <option value="">Semua Mood</option>
+            <option value="">{t('dashboard.allMoods')}</option>
             {MOOD_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
-                {option.emoji} {option.label}
+                {option.emoji} {t(`moods.${option.value}`)}
               </option>
               
             ))}
@@ -338,7 +340,7 @@ function Dashboard() {
               onChange={(e) => setSelectedTag(e.target.value || null)}
               className="flex-1 sm:flex-none w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none transition text-sm"
             >
-              <option value="">Semua Tag</option>
+              <option value="">{t('dashboard.allTags')}</option>
               {Array.from(new Set(entries.flatMap(e => e.tags || []))).map((tag) => (
                 <option key={tag} value={tag}>#{tag}</option>
               ))}
@@ -351,12 +353,12 @@ function Dashboard() {
               className="px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 hover:bg-gray-300 dark:bg-slate-600 dark:hover:bg-slate-500 text-gray-700 dark:text-gray-300 rounded-xl transition flex items-center gap-1 text-sm"
             >
               <X className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">Reset</span>
+              {t('common.reset')}
             </button>
           )}
         </div>
         <div className="mt-2 sm:mt-3 text-center sm:text-center text-xs text-gray-500 dark:text-gray-400">
-          Menampilkan {filteredEntries.length} dari {entries.length} jurnal
+          {t('dashboard.showing')} {filteredEntries.length} {t('dashboard.of')} {entries.length} {t('dashboard.journals')}
         </div>
       </div>
 
@@ -365,10 +367,10 @@ function Dashboard() {
         <div className="text-center py-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
           <div className="text-6xl mb-4"></div>
           <p className="text-lg text-gray-700 dark:text-gray-300">
-            {entries.length === 0 ? 'Belum ada jurnal' : 'Tidak ada hasil yang cocok'}
+            {entries.length === 0 ? t('dashboard.noJournals') : t('dashboard.noResults')}
           </p>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            {entries.length === 0 ? 'Buat jurnal pertamamu sekarang!' : 'Coba ubah kata kunci atau filter yang lain.'}
+            {entries.length === 0 ? t('dashboard.createFirst') : t('dashboard.tryDifferentFilter')}
           </p>
         </div>
         ) : (
@@ -386,7 +388,7 @@ function Dashboard() {
                       <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />
                     )}
                     <h3 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
-                      {entry.title || 'Tanpa Judul'}
+                      {entry.title || t('dashboard.untitled')}
                     </h3>
                     {entry.tags && entry.tags.length > 0 && (
                       <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs">

@@ -3,6 +3,7 @@ import { toast } from 'sonner'
 import { supabase } from '../services/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, Lock, Eye, EyeOff, X, BookOpen, Camera, FileDown, PenSquare, BarChart3, Calendar, Info} from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -10,9 +11,10 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [activeAboutTab, setActiveAboutTab] = useState('Tentang');
+  const [activeAboutTab, setActiveAboutTab] = useState('about');
   const navigate = useNavigate();
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +46,7 @@ function Register() {
           <button
             onClick={() => {
               setIsAboutOpen(true);
-              setActiveAboutTab('Tentang');
+              setActiveAboutTab('about');
             }}
             className="absolute top-4 right-4 p-2 rounded-full text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition"
             aria-label="Tentang Aplikasi"
@@ -57,14 +59,14 @@ function Register() {
               <img src="/logo.png" alt="Journal App" className="w-10 h-10" />
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
-              Daftar Akun
+              {t('auth.registerTitle')}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Buat akun dan mulai membuat Jurnal baru!
+              {t('auth.registerDesc')}
             </p>
           </div>
 
-          {/* ===== MODAL TENTANG APLIKASI (DENGAN TAB) ===== */}
+        {/* ===== MODAL TENTANG APLIKASI (DENGAN TAB) ===== */}
         {isAboutOpen && (
           <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn p-4"
@@ -77,11 +79,11 @@ function Register() {
               {/* Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-slate-700 flex-shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/25 rounded-lg">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                     <img src="/logo.png" alt="Journal App" className="w-10 h-10" />
                   </div>
                   <h2 className="text-lg pt-5 font-bold text-gray-900 dark:text-gray-100">
-                    Tentang Journal App
+                    {t('modal.aboutTitle')}
                   </h2>
                 </div>
                 <button
@@ -96,19 +98,19 @@ function Register() {
               <div className="flex flex-col flex-1 overflow-hidden">
                 {/* Tab Navigation */}
                 <div className="flex justify-center gap-0.5 sm:gap-1 px-3 sm:px-6 pt-3 sm:pt-4 border-b border-gray-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
-                  {['Tentang', 'Fitur', 'Teknologi', 'Kredit', 'Sosial Media'].map((tab) => (
+                  {['about', 'features', 'technology', 'credits', 'social'].map((tabKey) => (
                     <button
-                      key={tab}
-                      onClick={() => setActiveAboutTab(tab)}
+                      key={tabKey}
+                      onClick={() => setActiveAboutTab(tabKey)}
                       className={`
                         px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-t-lg sm:rounded-t-xl transition whitespace-nowrap
-                        ${activeAboutTab === tab
+                        ${activeAboutTab === tabKey
                           ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-b-2 border-blue-500'
                           : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-800'
                         }
                       `}
                     >
-                      {tab}
+                      {t(`modal.tabs.${tabKey}`)}
                     </button>
                   ))}
                 </div>
@@ -116,16 +118,15 @@ function Register() {
                 {/* Konten Tab */}
                 <div className="flex-1 overflow-y-auto p-6">
                   {/* Tab: Tentang */}
-                  {activeAboutTab === 'Tentang' && (
+                  {activeAboutTab === 'about' && (
                     <div className="space-y-4">
-                      <p className="text-gray-400 dark:text-gray-400leading-relaxed">
-                        <strong className="text-white">Journal App</strong> adalah aplikasi jurnal harian modern yang pertama kali saya buat. Menulis jurnal harian dengan fitur Mood Emoji Tracker, Mood Emoji Statistik, Kalender dan Arsip. 
-                        Mencoba teknologi baru dan mengenal ekosistem modern untuk membangun aplikasi web yang cepat, ringan, dan responsif.
-                      </p>
+                      <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                        {t('modal.aboutDesc')}
+                      </p> 
                       <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800/50">
                         <p className="text-sm text-yellow-700 dark:text-yellow-300 flex items-start gap-2">
                           <span>
-                            <strong>Penting:</strong> Web ini masih dalam pengembangan
+                            <strong>{t('modal.important')}:</strong> {t('modal.wipNotice')}
                           </span>
                         </p>
                       </div>
@@ -133,83 +134,83 @@ function Register() {
                   )}
 
                   {/* Tab: Fitur */}
-                  {activeAboutTab === 'Fitur' && (
+                  {activeAboutTab === 'features' && (
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
                         <PenSquare className="w-5 h-5 text-blue-500" />
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-gray-100">Tulis Jurnal</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Catat harian dengan mood, lagu, dan foto</p>
+                          <p className="font-medium text-gray-900 dark:text-gray-100">{t('modal.features.writeJournal.title')}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{t('modal.features.writeJournal.desc')}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
                         <BarChart3 className="w-5 h-5 text-purple-500" />
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-gray-100">Statistik Mood</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Grafik tren mood harian & distribusi</p>
+                          <p className="font-medium text-gray-900 dark:text-gray-100">{t('modal.features.moodStats.title')}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{t('modal.features.moodStats.desc')}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
                         <Calendar className="w-5 h-5 text-green-500" />
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-gray-100">Kalender Jurnal</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Lihat jurnal per tanggal</p>
+                          <p className="font-medium text-gray-900 dark:text-gray-100">{t('modal.features.calendar.title')}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{t('modal.features.calendar.desc')}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
                         <BookOpen className="w-5 h-5 text-amber-500" />
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-gray-100">Favorit & Arsip</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Kelola jurnal favorit dan arsip</p>
+                          <p className="font-medium text-gray-900 dark:text-gray-100">{t('modal.features.favoriteArchive.title')}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{t('modal.features.favoriteArchive.desc')}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
                         <Camera className="w-5 h-5 text-pink-500" />
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-gray-100">Upload Foto</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Tambahkan foto ke jurnal harian</p>
+                          <p className="font-medium text-gray-900 dark:text-gray-100">{t('modal.features.uploadPhoto.title')}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{t('modal.features.uploadPhoto.desc')}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-xl">
                         <FileDown className="w-5 h-5 text-red-500" />
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-gray-100">Export PDF</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Cetak jurnal ke PDF</p>
+                          <p className="font-medium text-gray-900 dark:text-gray-100">{t('modal.features.exportPdf.title')}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{t('modal.features.exportPdf.desc')}</p>
                         </div>
                       </div>
                     </div>
                   )}
 
                   {/* Tab: Teknologi */}
-                  {activeAboutTab === 'Teknologi' && (
+                  {activeAboutTab === 'technology' && (
                     <div className="space-y-4">
                       <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-                        Dibangun dengan teknologi modern:
+                        {t('modal.techDesc')}
                       </p>
                       <div className="flex justify-center">
                         <img
-                          src="https://skillicons.dev/icons?i=react,ts,vite,tailwind,supabase,git,vercel,figma&theme=dark"
+                          src="https://skillicons.dev/icons?i=typescript,react,vite,tailwind,supabase,vercel&theme=dark"
                           alt="Tech Stack"
                           className="w-full max-w-md rounded-xl"
                         />
                       </div>
                       <p className="text-xs text-gray-400 dark:text-gray-400 text-center">
-                        React • TypeScript • Vite • Tailwind CSS • Supabase • Git • Vercel • Figma
+                        TypeScript • React • Vite • Tailwind CSS • Supabase • Vercel
                       </p>
                     </div>
                   )}
 
                   {/* Tab: Kredit */}
-                  {activeAboutTab === 'Kredit' && (
+                  {activeAboutTab === 'credits' && (
                     <div className="space-y-4 text-center">
-                      <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-lg shadow-emerald-500/25 mb-2">
+                      <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/25 mb-2">
                         <img src="/logo.png" alt="Journal App" className="w-10 h-10" />
                       </div>
                       <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Journal App</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Versi 1.5.0</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Version 1.5.0</p>
                       <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          dibuat oleh <strong className="text-gray-900 dark:text-gray-100">Feri</strong>
+                          {t('modal.createdBy')} <strong>Feri</strong>
                         </p>
                         <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                           {new Date().getFullYear()} • All Rights Reserved
@@ -219,10 +220,10 @@ function Register() {
                   )}
 
                   {/* Tab: Sosial Media */}
-                    {activeAboutTab === 'Sosial Media' && (
+                    {activeAboutTab === 'social' && (
                       <div className="space-y-4">
                         <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-                          Hubungi Saya
+                          {t('modal.contactMe')}
                         </p>
                         <div className="flex justify-center gap-4 flex-wrap">
                           <a href="https://www.instagram.com/imnotferrriii" target="_blank" rel="noopener noreferrer">
@@ -233,7 +234,7 @@ function Register() {
                           </a>
                         </div>
                         <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
-
+                          
                         </p>
                       </div>
                     )}
@@ -248,7 +249,7 @@ function Register() {
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                Email
+                {t('auth.email')}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
@@ -266,7 +267,7 @@ function Register() {
             {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                Password <span className="text-gray-400 dark:text-gray-500">(min. 6 karakter)</span>
+                {t('auth.password')} <span className="text-gray-400 dark:text-gray-500">({t('auth.minChars')})  </span>
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
@@ -303,15 +304,15 @@ function Register() {
               className="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-emerald-500/25"
             >
               <UserPlus className="w-4 h-4" />
-              {loading ? 'Memuat...' : 'Daftar'}
+              {loading ? t('common.loading') : t('auth.registerBtn')}
             </button>
           </form>
 
           {/* Login Link */}
           <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-            Sudah punya akun?{' '}
+            {t('auth.hasAccount')}{' '}
             <Link to="/login" className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium transition">
-              Masuk Sekarang
+              {t('auth.loginNow')}
             </Link>
           </p>
         </div>

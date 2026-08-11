@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import SettingsModal from './SettingsModal';
 import { exportAllEntries } from '../utils/exportPDF';
 import HelpModal from './HelpModal'; 
+import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard,
   PenSquare,
@@ -34,6 +35,15 @@ function Layout({ refreshActivity }: { refreshActivity: () => void }) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const { t } = useTranslation();
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const closeSidebar = () => setIsSidebarOpen(false);
+  const toggleCollapse = () => setIsCollapsed(!isCollapsed);
+  const toggleUserDropdown = () => setIsUserDropdownOpen(!isUserDropdownOpen);
+  const closeUserDropdown = () => setIsUserDropdownOpen(false);
+  const location = useLocation();
+  const isActive = (path: string) => location.pathname === path;
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   const handleLogout = async () => {
   try {
@@ -55,21 +65,14 @@ function Layout({ refreshActivity }: { refreshActivity: () => void }) {
     }
 
     await supabase.auth.signOut();
-    toast.success('Berhasil Logout!');
+    toast.success(t('layout.logoutSuccess'))
     navigate('/login');
   } catch (err) {
-    toast.error('Gagal logout: ' + (err as Error).message);
+    toast.error(t('layout.logoutFailed') + (err as Error).message);
   }
 };
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const closeSidebar = () => setIsSidebarOpen(false);
-  const toggleCollapse = () => setIsCollapsed(!isCollapsed);
-  const toggleUserDropdown = () => setIsUserDropdownOpen(!isUserDropdownOpen);
-  const closeUserDropdown = () => setIsUserDropdownOpen(false);
-  const location = useLocation();
-  const isActive = (path: string) => location.pathname === path;
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  
 
   // Tutup dropdown saat klik di luar
   useEffect(() => {
@@ -121,40 +124,40 @@ function Layout({ refreshActivity }: { refreshActivity: () => void }) {
 
       if (error) throw error;
       if (!entries || entries.length === 0) {
-        toast.info('Belum ada jurnal untuk diekspor.');
+        toast.info(t('layout.noJournalsExport'))
         return;
       }
 
       await exportAllEntries(entries);
-      toast.success('Data berhasil diekspor ke PDF!');
+      toast.success(t('layout.exportSuccess'))
     } catch (err: unknown) {
-      toast.error('Gagal ekspor data: ' + (err as Error).message);
+      toast.error(t('layout.exportFailed') + (err as Error).message);
     } finally {
       closeUserDropdown();
     }
   };
 
   const navItems = [
-    { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/create', icon: PenSquare, label: 'Tambah' },
-    { to: '/stats', icon: BarChart3, label: 'Statistik' },
-    { to: '/calendar', icon: Calendar, label: 'Kalender' },
-    { to: '/archive', icon: Archive, label: 'Arsip' },
-    { 
-      to: '/activity', 
-      icon: Activity, 
-      label: 'Aktivitas',
-      onClick: refreshActivity
-    },
-  ];
+  { to: '/', icon: LayoutDashboard, label: t('nav.dashboard') },
+  { to: '/create', icon: PenSquare, label: t('nav.add') },
+  { to: '/stats', icon: BarChart3, label: t('nav.stats') },
+  { to: '/calendar', icon: Calendar, label: t('nav.calendar') },
+  { to: '/archive', icon: Archive, label: t('nav.archive') },
+  {
+    to: '/activity',
+    icon: Activity,
+    label: t('nav.activity'),
+    onClick: refreshActivity
+  },
+];
 
   // Untuk bottom navigation (mobile)
 const bottomNavItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/calendar', icon: Calendar, label: 'Kalender' },
-  { to: '/create', icon: PenSquare, label: 'Jurnal Baru' },
-  { to: '/stats', icon: BarChart3, label: 'Stats' },
-  { to: '/settings', icon: Settings, label: 'Pengaturan' },
+  { to: '/', icon: LayoutDashboard, label: t('nav.dashboard') },
+  { to: '/calendar', icon: Calendar, label: t('nav.calendar') },
+  { to: '/create', icon: PenSquare, label: t('nav.newJournal') },
+  { to: '/stats', icon: BarChart3, label: t('nav.statsShort') },
+  { to: '/settings', icon: Settings, label: t('nav.settings') },
 ];
 
   // Ambil inisial untuk avatar
@@ -309,7 +312,7 @@ const bottomNavItems = [
                     <Sun className="w-4 h-4 text-yellow-400" />
                   )}
                   <span className="text-sm font-medium">
-                    {theme === 'light' ? 'Mode Gelap' : 'Mode Terang'}
+                    {theme === 'light' ? t('layout.darkMode') : t('layout.lightMode')}
                   </span>
                 </div>
                 <div className={`w-8 h-4 rounded-full transition relative ${theme === 'dark' ? 'bg-blue-500' : 'bg-gray-300'}`}>
@@ -325,7 +328,7 @@ const bottomNavItems = [
                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group text-left"
               >
                 <Download className="w-4 h-4 text-gray-400 group-hover:text-green-500" />
-                <span className="text-sm font-medium">Export Data</span>
+                <span className="text-sm font-medium">{t('layout.exportData')}</span>
               </button>
 
               {/* Pengaturan */}
@@ -337,7 +340,7 @@ const bottomNavItems = [
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group w-full text-left"
               >
                 <Settings className="w-4 h-4 text-gray-400 group-hover:text-blue-500" />
-                <span className="text-sm font-medium">Pengaturan</span>
+                <span className="text-sm font-medium">{t('layout.settings')}</span>
               </button>
                 
               {/* === FITUR BARU: BANTUAN === */}
@@ -349,7 +352,7 @@ const bottomNavItems = [
                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group text-left"
               >
                 <HelpCircle className="w-4 h-4 text-gray-400 group-hover:text-purple-500" />
-                <span className="text-sm font-medium">Feedback</span>
+                <span className="text-sm font-medium">{t('layout.feedback')}</span>
               </button>
               
               <div className="border-t border-gray-100 dark:border-slate-700 my-1" />
@@ -363,7 +366,7 @@ const bottomNavItems = [
                 className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition group text-left"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="text-sm font-medium">Log out</span>
+                <span className="text-sm font-medium">{t('layout.logout')}</span>
               </button>
             </div>
           </div>

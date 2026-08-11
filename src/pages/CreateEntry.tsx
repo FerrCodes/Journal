@@ -6,9 +6,11 @@ import type { MoodValue } from '../types/journal';
 import { toast } from 'sonner'
 import { PenSquare, Save, Tag, Loader2, Image, Upload, X, Music, Cloud } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import { useTranslation } from 'react-i18next';
 
 function CreateEntry() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState('');
@@ -132,13 +134,13 @@ function CreateEntry() {
       <div className="flex items-center justify-between mb-4">  
         <div className="flex items-center gap-2">
           <PenSquare className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">Jurnal Baru</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">{t('journal.newEntry')}</h1>
         </div>
         <Link 
           to="/"
           className="inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-xs sm:text-sm"
         >
-          <span className="hidden sm:inline">← Kembali</span>
+          <span className="hidden sm:inline">←</span>
           <span className="sm:hidden">←</span>
         </Link>
       </div>
@@ -146,38 +148,32 @@ function CreateEntry() {
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         {/* Judul */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-            Judul <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
-          </label>
+          {t('journal.titleOptional')}
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Masukkan judul jurnal..."
+            placeholder={t('journal.titlePlaceholder')}
             className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
           />
         </div>
 
         {/* Isi Jurnal */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-            Isi Jurnal <span className="text-red-500">*</span>
-          </label>
+        {t('journal.contentLabel')} <span className="text-red-500">*</span>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
             rows={6}
-            placeholder="Ceritakan pengalaman hari ini..."
+            placeholder={t('journal.contentPlaceholder')}
             className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-y text-sm sm:text-base"
           />
         </div>
 
         {/* Mood */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Mood Hari Ini <span className="text-red-500">*</span>
-          </label>
+          {t('journal.moodLabel')} <span className="text-red-500">*</span>
           <div className="flex flex-wrap gap-2">
             {MOOD_OPTIONS.map((option) => (
               <button
@@ -190,7 +186,7 @@ function CreateEntry() {
                     : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600'
                 }`}
               >
-                {option.emoji} {option.label}
+                {option.emoji} {t(option.labelKey)}
               </button>
             ))}
           </div>
@@ -200,28 +196,28 @@ function CreateEntry() {
         <div className="border-t border-gray-200 dark:border-slate-700 pt-6">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-1">
             <Music className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-            Lagu Favorit <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
+            {t('journal.songLabel')} <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
           </label>
           <div className="space-y-3">
             <input
               type="text"
               value={songTitle}
               onChange={(e) => setSongTitle(e.target.value)}
-              placeholder="Judul lagu..."
+              placeholder={t('journal.songTitlePlaceholder')}
               className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
             <input
               type="text"
               value={songArtist}
               onChange={(e) => setSongArtist(e.target.value)}
-              placeholder="Nama artis..."
+              placeholder={t('journal.songArtistPlaceholder')}
               className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
             <input
               type="url"
               value={songUrl}
               onChange={(e) => setSongUrl(e.target.value)}
-              placeholder="Link Spotify / YouTube..."
+              placeholder={t('journal.songUrlPlaceholder')}
               className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
           </div>
@@ -231,13 +227,13 @@ function CreateEntry() {
         <div>
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center gap-1">
             <Cloud className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-            Cuaca <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
+            {t('journal.weatherLabel')} <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
           </label>
           <input
             type="text"
             value={weather}
             onChange={(e) => setWeather(e.target.value)}
-            placeholder="Cerah, Hujan, Mendung..."
+            placeholder={t('journal.weatherPlaceholder')}
             className="w-full max-w-full px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
           />
         </div>
@@ -246,7 +242,7 @@ function CreateEntry() {
         <div>
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center gap-1">
             <Tag className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-            Tags <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
+            {t('journal.tagsLabel')} <span className="text-gray-400 dark:text-gray-500">(Opsional)</span>
           </label>
           <div className="flex flex-wrap gap-2">
             <input
@@ -254,7 +250,7 @@ function CreateEntry() {
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ketik tag, lalu Enter..."
+              placeholder={t('journal.tagsPlaceholder')}
               className="w-full max-w-full flex-1 px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm sm:text-base"
             />
             <button
@@ -262,7 +258,7 @@ function CreateEntry() {
               onClick={handleAddTag}
               className="px-5 py-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded-xl transition text-sm font-medium whitespace-nowrap"
             >
-              Tambah
+              {t('journal.addTag')}
             </button>
           </div>
           {tags.length > 0 && (
@@ -290,7 +286,7 @@ function CreateEntry() {
         <div className="border-t border-gray-200 dark:border-slate-700 pt-6">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-1">
             <Image className="w-4 h-4" />
-            Foto <span className="text-gray-400 dark:text-gray-500">(Opsional, maksimal 3)</span>
+            {t('journal.photoLabel')} <span className="text-gray-400 dark:text-gray-500">{t('journal.photoMax')}</span>
           </label>
 
           {imagePreviews.length > 0 && (
@@ -317,7 +313,7 @@ function CreateEntry() {
           {files.length < 3 && (
             <label className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-xl transition cursor-pointer text-sm font-medium">
               <Upload className="w-4 h-4" />
-              Pilih Foto
+              {t('journal.choosePhoto')}
               <input
                 type="file"
                 accept="image/*"
@@ -345,12 +341,12 @@ function CreateEntry() {
           {loading || uploading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              Menyimpan...
+              {t('common.saving')}
             </>
           ) : (
             <>
               <Save className="w-4 h-4" />
-              Simpan Jurnal
+              {t('journal.saveJournal')}
             </>
           )}
           </button>

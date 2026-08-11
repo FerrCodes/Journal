@@ -23,11 +23,11 @@ export interface EntryImage {
 }
 
 export const MOOD_OPTIONS = [
-  { value: 1, emoji: '😢', label: 'Sangat Sedih' },
-  { value: 2, emoji: '😐', label: 'Biasa Aja' },
-  { value: 3, emoji: '😊', label: 'Senang' },
-  { value: 4, emoji: '😄', label: 'Sangat Senang' },
-  { value: 5, emoji: '🤯', label: 'Luar Biasa!' },
+  { value: 1, emoji: '😢', labelKey: 'moods.1' },
+  { value: 2, emoji: '😐', labelKey: 'moods.2' },
+  { value: 3, emoji: '😊', labelKey: 'moods.3' },
+  { value: 4, emoji: '😄', labelKey: 'moods.4' },
+  { value: 5, emoji: '🤯', labelKey: 'moods.5' },
 ] as const;
 
 export type MoodValue = typeof MOOD_OPTIONS[number]['value'];

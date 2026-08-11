@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import { supabase } from '../services/supabase';
 import { Link } from 'react-router-dom';
 import { Skeleton } from '../components/Skeleton';
-import { BarChart3 } from 'lucide-react';
+import { ArrowLeft, BarChart3 } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -21,11 +21,13 @@ import {
 } from 'recharts';
 import { MOOD_OPTIONS } from '../types/journal';
 import type { JournalEntry } from '../types/journal';
+import { useTranslation } from 'react-i18next';
 
 function Stats() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { t, i18n } = useTranslation();
 
   const fetchEntries = async () => {
     setLoading(true);
@@ -57,15 +59,15 @@ function Stats() {
   }, []);
 
   const getLineChartData = () => {
-    return entries.map((entry) => ({
-      tanggal: new Date(entry.created_at).toLocaleDateString('id-ID', {
-        day: 'numeric',
-        month: 'short',
-      }),
-      mood: entry.mood,
-      judul: entry.title || 'Tanpa Judul',
-    }));
-  };
+  return entries.map((entry) => ({
+    tanggal: new Date(entry.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'id-ID', {
+      day: 'numeric',
+      month: 'short',
+    }),
+    mood: entry.mood,
+    judul: entry.title || t('dashboard.untitled'),
+  }));
+};
 
   const getBarChartData = () => {
     const moodCount: Record<number, number> = {};
@@ -76,7 +78,7 @@ function Stats() {
     return Object.entries(moodCount).map(([mood, count]) => ({
       mood: Number(mood),
       emoji: MOOD_OPTIONS.find((m) => m.value === Number(mood))?.emoji || '😐',
-      label: MOOD_OPTIONS.find((m) => m.value === Number(mood))?.label || 'Biasa Aja',
+      label: t(`moods.${mood}`),
       count,
     }));
   };
@@ -90,7 +92,7 @@ function Stats() {
       <div className="max-w-4xl mx-auto">
         <div className="max-w-4xl mx-auto text-center py-20">
           <div className="inline-block w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-600 dark:text-gray-400 mt-4">Memuat statistik...</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-4">{t('common.loading')}</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -125,28 +127,28 @@ function Stats() {
       <div className="flex items-center justify-between mb-4 sm:mb-6">
         <div className="flex items-center gap-2">
           <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
-          <h1 className="text-3xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">Statistik</h1>
+          <h1 className="text-3xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">{t('stats.title')}</h1>
         </div>
         <Link 
           to="/" 
           className="inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-xs sm:text-sm"
         >
-          <span className="hidden sm:inline">← Kembali</span>
-          <span className="sm:hidden">←</span>
+          <ArrowLeft className="hidden sm:inline">←</ArrowLeft>
+          <ArrowLeft className="sm:hidden">←</ArrowLeft>
         </Link>
       </div>
 
       {entries.length === 0 ? (
         <div className="text-center py-10 bg-white dark:bg-slate-800 rounded-xl shadow-md">
-          <p className="text-lg text-gray-700 dark:text-gray-300">Belum ada data jurnal</p>
-          <p className="text-gray-500 dark:text-gray-400">Tulis beberapa jurnal dulu untuk melihat statistik mood-mu!</p>
+          <p className="text-lg text-gray-700 dark:text-gray-300">{t('stats.totalJournals')}</p>
+          <p className="text-gray-500 dark:text-gray-400">{t('stats.noDataDesc')}</p>
         </div>
       ) : (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
             <div className="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-xl shadow-md text-center">
               <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{entries.length}</p>
-              <p className="text-gray-600 dark:text-gray-400 text-[10px] sm:text-sm">Total Jurnal</p>
+              <p className="text-gray-600 dark:text-gray-400 text-[10px] sm:text-sm">{t('stats.totalJournals')}</p>
             </div>
             <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md text-center">
               <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
@@ -154,7 +156,7 @@ function Stats() {
                   ? MOOD_OPTIONS.find(m => m.value === Math.round(entries.reduce((sum, e) => sum + e.mood, 0) / entries.length))?.emoji
                   : '😐'}
               </p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Rata-rata Mood</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">{t('stats.avgMood')}</p>
             </div>
             <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md text-center">
               <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
@@ -162,7 +164,7 @@ function Stats() {
                   ? MOOD_OPTIONS.find(m => m.value === Math.max(...entries.map(e => e.mood)))?.emoji
                   : '😐'}
               </p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Mood Tertinggi</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">{t('stats.highestMood')}</p>
             </div>
             <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md text-center">
               <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
@@ -170,13 +172,13 @@ function Stats() {
                   ? MOOD_OPTIONS.find(m => m.value === Math.min(...entries.map(e => e.mood)))?.emoji
                   : '😐'}
               </p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Mood Terendah</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">{t('stats.lowestMood')}</p>
             </div>
           </div>
 
           {lineData.length >= 2 && (
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-md mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tren Mood Harian</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('stats.dailyTrend')}</h3>
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={lineData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" strokeOpacity={0.5} />
@@ -186,9 +188,9 @@ function Stats() {
                     contentStyle={{ backgroundColor: 'white', borderRadius: '8px', border: 'none' }}
                     formatter={(value) => {
                       const found = MOOD_OPTIONS.find(m => m.value === value);
-                      return `${found?.emoji} ${found?.label}`;
+                      return `${found?.emoji} ${found ? t(found.labelKey) : ''}`; 
                     }}
-                    labelFormatter={(label) => `Tanggal: ${label}`}
+                    labelFormatter={(label) => `${t('stats.date')} ${label}`}
                   />
                   <Legend />
                   <Line type="monotone" dataKey="mood" stroke="#3b82f6" strokeWidth={2} activeDot={{ r: 8 }} name="Mood" />
@@ -199,7 +201,7 @@ function Stats() {
 
           {barData.length > 0 && (
             <div className="bg-white dark:bg-slate-800 p-3 sm:p-5 rounded-xl shadow-md mb-4 sm:mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Frekuensi Mood</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('stats.moodFrequency')}</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={barData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" strokeOpacity={0.5} />
@@ -207,10 +209,10 @@ function Stats() {
                   <YAxis stroke="#9ca3af" tick={{ fill: '#9ca3af' }} />
                   <Tooltip
                     contentStyle={{ backgroundColor: 'white', borderRadius: '8px', border: 'none' }}
-                    formatter={(value) => `${value} jurnal`}
+                    formatter={(value) => `${value} ${t('stats.journals')}`}
                   />
                   <Legend />
-                  <Bar dataKey="count" name="Jumlah Jurnal">
+                  <Bar dataKey="count" name={t('stats.journalCount')}>
                     {barData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[entry.mood - 1] || '#3b82f6'} />
                     ))}
@@ -222,7 +224,7 @@ function Stats() {
 
           {barData.length > 0 && (
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-md">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Distribusi Mood</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('stats.moodDistribution')}</h3>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie

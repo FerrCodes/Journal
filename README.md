@@ -1,6 +1,6 @@
 # 📔 Journal App
 
-> Sebuah ruang digital pribadi untuk mencatat pikiran, perasaan, dan momen sehari-hari.
+> Sebuah ruang digital pribadi untuk mencatat pikiran, perasaan, dan momen sehari-hari. Projek Favorit
 
 ![Status](https://img.shields.io/badge/Status-Work%20in%20Progress-yellow)
 ![React](https://img.shields.io/badge/React-18-blue)
@@ -30,6 +30,6 @@ Project ini dibangun dengan teknologi modern yang berfokus pada performa dan *ty
 ---
 
 <div align="center">
-<p>Dibuat dengan ❤️ oleh <strong>Feri</strong></p>
+<p>Dibuat oleh <strong>Feri</strong></p>
 <p><sub>Journal App v1.5.0 • Work in Progress</sub></p>
 </div>

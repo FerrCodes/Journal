@@ -18,24 +18,50 @@ function Dashboard() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const fetchEntries = async () => {
+    const fetchEntries = async () => {
     setLoading(true);
     setError(null);
-
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Silakan login terlebih dahulu.');
 
-      const { data, error } = await supabase
+      // 1. Ambil data jurnal saja
+      const { data: entriesData, error: entriesError } = await supabase
         .from('entries')
         .select('*')
         .eq('user_id', user.id)
         .eq('is_archived', false)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setEntries(data || []);
-      setFilteredEntries(data || []);
+      if (entriesError) throw entriesError;
+
+      // 2. Kalau ada jurnal, ambil foto-fotonya secara terpisah
+      if (entriesData && entriesData.length > 0) {
+        const entryIds = entriesData.map(e => e.id);
+        
+        const { data: imagesData, error: imagesError } = await supabase
+          .from('entry_images')
+          .select('*')
+          .in('entry_id', entryIds);
+
+        if (!imagesError && imagesData) {
+          // Gabungkan data foto ke dalam data jurnal
+          const entriesWithImages = entriesData.map(entry => ({
+            ...entry,
+            entry_images: imagesData.filter(img => img.entry_id === entry.id)
+          }));
+          
+          setEntries(entriesWithImages as JournalEntry[]);
+          setFilteredEntries(entriesWithImages as JournalEntry[]);
+        } else {
+          setEntries(entriesData as JournalEntry[]);
+          setFilteredEntries(entriesData as JournalEntry[]);
+        }
+      } else {
+        setEntries([]);
+        setFilteredEntries([]);
+      }
+
     } catch (err: unknown) {
       setError((err as Error).message);
       toast.error('Gagal memuat data: ' + (err as Error).message);

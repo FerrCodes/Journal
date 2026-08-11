@@ -30,6 +30,6 @@ Project ini dibangun dengan teknologi modern yang berfokus pada performa dan *ty
 ---
 
 <div align="center">
-<p>Dibuat dengan ❤️ oleh <strong>Feri</strong></p>
+<p>Dibuat oleh <strong>Feri</strong></p>
 <p><sub>Journal App v1.5.0 • Work in Progress</sub></p>
 </div>

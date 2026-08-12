@@ -45,6 +45,8 @@
     "loading": "Memuat..."
   },
     "auth": {
+    "genericError": "Terjadi kesalahan",
+    "userNotFound": "User tidak ditemukan.",
     "welcome": "Selamat Datang",
     "loginDesc": "Lanjutkan progres Jurnal baru dan mengelola catatan harian!",
     "email": "Email",
@@ -88,7 +90,12 @@
     "contactMe": "Hubungi Saya"
   },
   "journal": {
+    "confirmDeletePhoto": "Yakin mau hapus foto ini?",
+    "entryIdNotFound": "ID entri tidak ditemukan.",
+    "entryNotFound": "Entri tidak ditemukan.",
     "newEntry": "Jurnal Baru",
+    "saveSuccess": "Jurnal berhasil disimpan!",
+    "saveFailed": "Gagal menyimpan jurnal",
     "titleOptional": "Judul (Opsional)",
     "titlePlaceholder": "Masukkan judul jurnal...",
     "contentLabel": "Isi Jurnal",
@@ -123,6 +130,8 @@
     "5": "Luar Biasa!"
   },
     "dashboard": {
+    "pleaseLogin": "Silakan login terlebih dahulu.",
+    "loadFailed": "Gagal memuat data",
     "journalList": "Daftar Jurnal",
     "entries": "entri",
     "last": "Terakhir",
@@ -148,6 +157,16 @@
     "untitled": "Tanpa Judul"
   },
     "detail": {
+    "deleteSuccess": "Jurnal berhasil dihapus!",
+    "deleteFailed": "Gagal menghapus jurnal",
+    "removeFavoriteSuccess": "Dihapus dari Favorit",
+    "addFavoriteSuccess": "Ditambahkan ke Favorit!",
+    "updateFavoriteFailed": "Gagal update favorit",
+    "archiveSuccess": "Jurnal diarsipkan!",
+    "archiveFailed": "Gagal mengarsipkan",
+    "updateDateSuccess": "Tanggal & cuaca berhasil diupdate!",
+    "updateFailed": "Gagal update",
+    "deleteAllPhotosSuccess": "Semua foto berhasil dihapus!",
     "title": "Detail Jurnal",
     "removeFavorite": "Hapus",
     "addFavorite": "Tambah Favorit",
@@ -178,6 +197,8 @@
     "restoreFailed": "Gagal mengembalikan"
   },
   "stats": {
+    "pleaseLogin": "Silakan login terlebih dahulu.",
+    "loadFailed": "Gagal memuat statistik",
     "title": "Statistik",
     "totalJournals": "Total Jurnal",
     "avgMood": "Rata-rata Mood",

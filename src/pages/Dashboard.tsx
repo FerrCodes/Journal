@@ -25,7 +25,7 @@ function Dashboard() {
     setError(null);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Silakan login terlebih dahulu.');
+      if (!user) throw new Error(t('dashboard.pleaseLogin'));
 
       // 1. Ambil data jurnal saja
       const { data: entriesData, error: entriesError } = await supabase
@@ -66,7 +66,7 @@ function Dashboard() {
 
     } catch (err: unknown) {
       setError((err as Error).message);
-      toast.error('Gagal memuat data: ' + (err as Error).message);
+      toast.error(t('dashboard.loadFailed') + ': ' + (err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -75,6 +75,7 @@ function Dashboard() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchEntries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

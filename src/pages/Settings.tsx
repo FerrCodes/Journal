@@ -93,7 +93,7 @@ function Settings() {
     setIsDeleting(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User tidak ditemukan');
+      if (!user) throw new Error(t('auth.userNotFound'));
 
       const { error } = await supabase
         .from('entries')
@@ -123,7 +123,7 @@ const handleLogout = async () => {
   const handleExportAll = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User tidak ditemukan');
+      if (!user) throw new Error(t('auth.userNotFound'));
 
       const { data: entries, error } = await supabase
         .from('entries')

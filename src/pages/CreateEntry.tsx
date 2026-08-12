@@ -56,11 +56,11 @@ function CreateEntry() {
         const { error: imageError } = await supabase.from('entry_images').insert(imageInserts);
         if (imageError) throw imageError;
       }
-      toast.success('Jurnal berhasil disimpan!');
+      toast.success(t('journal.saveSuccess'));
       navigate('/');
     } catch (err: unknown) {
       setError((err as Error).message);
-      toast.error('Gagal menyimpan jurnal: ' + (err as Error).message);
+      toast.error(t('journal.saveFailed') + ': ' + (err as Error).message);
     } finally {
       setLoading(false);
       setUploading(false);
@@ -89,7 +89,7 @@ function CreateEntry() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
     if (selectedFiles.length + files.length > 3) {
-      toast.warning('Maksimal 3 foto per jurnal.');
+      toast.warning(t('journal.maxPhotos'));
       return;
     }
     setFiles([...files, ...selectedFiles]);

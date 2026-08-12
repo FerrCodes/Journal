@@ -39,7 +39,6 @@ function Login() {
             action: 'login',
             details: { email: data.user.email }
           });
-        console.log('Activity log tercatat!');
       } catch (logError) {
         console.warn('Gagal mencatat aktivitas:', logError);
       }
@@ -51,7 +50,7 @@ function Login() {
     }
   } catch (err) {
     console.error('Login error:', err);
-    const errorMessage = err instanceof Error ? err.message : 'Terjadi kesalahan';
+      const errorMessage = err instanceof Error ? err.message : t('auth.genericError');
     toast.error(errorMessage);
   } finally {
     setLoading(false);

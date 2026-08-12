@@ -35,7 +35,7 @@ function Stats() {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Silakan login terlebih dahulu.');
+      if (!user) throw new Error(t('stats.pleaseLogin'));
 
       const { data, error } = await supabase
         .from('entries')
@@ -47,7 +47,7 @@ function Stats() {
       setEntries(data || []);
     } catch (err: unknown) {
       setError((err as Error).message);
-      toast.error('Gagal memuat statistik: ' + (err as Error).message);
+      toast.error(t('stats.loadFailed') + ': ' + (err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -56,6 +56,7 @@ function Stats() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchEntries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getLineChartData = () => {

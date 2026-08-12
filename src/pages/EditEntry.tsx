@@ -38,7 +38,7 @@ function EditEntry() {
           return;
         }
         if (!id) {
-          throw new Error('ID entri tidak ditemukan.');
+          throw new Error(t('journal.entryIdNotFound'));
         }
 
         // 1. Ambil data jurnal saja
@@ -50,7 +50,7 @@ function EditEntry() {
           .single();
 
         if (error) throw error;
-        if (!data) throw new Error('Entri tidak ditemukan.');
+        if (!data) throw new Error(t('journal.entryNotFound'));
 
         setTitle(data.title || '');
         setContent(data.content || '');
@@ -107,7 +107,7 @@ function EditEntry() {
     setError(null);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User tidak ditemukan.');
+      if (!user) throw new Error(t('auth.userNotFound'));
 
       const { error: updateError } = await supabase
         .from('entries')
@@ -168,7 +168,7 @@ function EditEntry() {
   };
 
   const removeExistingImage = async (imageId: string, imageUrl: string) => {
-    const confirmDelete = window.confirm('Yakin mau hapus foto ini?');
+    const confirmDelete = window.confirm(t('journal.confirmDeletePhoto'));
     if (!confirmDelete) return;
 
     try {

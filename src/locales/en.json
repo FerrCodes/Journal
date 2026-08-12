@@ -11,6 +11,8 @@
     "loading": "Loading..."
   },
     "auth": {
+    "genericError": "An error occurred",
+    "userNotFound": "User not found.",
     "welcome": "Welcome",
     "loginDesc": "Continue your journal progress and manage daily notes!",
     "email": "Email",
@@ -54,7 +56,12 @@
     "contactMe": "Contact Me"
   },
   "journal": {
+    "confirmDeletePhoto": "Are you sure you want to delete this photo?",
+    "entryIdNotFound": "Entry ID not found.",
+    "entryNotFound": "Entry not found.",
     "newEntry": "New Journal",
+    "saveSuccess": "Journal saved successfully!",
+    "saveFailed": "Failed to save journal",
     "editEntry": "Edit Journal",
     "updateJournal": "Update Journal",
     "updateSuccess": "Journal updated successfully!",
@@ -123,6 +130,8 @@
     "exportFailed": "Failed to export data"
   },
     "dashboard": {
+    "pleaseLogin": "Please login first.",
+    "loadFailed": "Failed to load data",
     "journalList": "Journal List",
     "entries": "entries",
     "last": "Last",
@@ -148,6 +157,16 @@
     "untitled": "Untitled"
   },
     "detail": {
+    "deleteSuccess": "Journal deleted successfully!",
+    "deleteFailed": "Failed to delete journal",
+    "removeFavoriteSuccess": "Removed from Favorites",
+    "addFavoriteSuccess": "Added to Favorites!",
+    "updateFavoriteFailed": "Failed to update favorite",
+    "archiveSuccess": "Journal archived!",
+    "archiveFailed": "Failed to archive",
+    "updateDateSuccess": "Date & weather updated successfully!",
+    "updateFailed": "Failed to update",
+    "deleteAllPhotosSuccess": "All photos deleted successfully!",
     "title": "Journal Detail",
     "removeFavorite": "Remove",
     "addFavorite": "Add Favorite",
@@ -178,6 +197,8 @@
     "restoreFailed": "Failed to restore"
   },
   "stats": {
+    "pleaseLogin": "Please login first.",
+    "loadFailed": "Failed to load statistics",
     "title": "Statistics",
     "totalJournals": "Total Journals",
     "avgMood": "Average Mood",

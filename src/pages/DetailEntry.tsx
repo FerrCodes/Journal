@@ -119,11 +119,11 @@ function DetailEntry() {
         .eq('id', id);
 
       if (error) throw error;
-      toast.success('Jurnal berhasil dihapus!');
+      toast.success(t('detail.deleteSuccess'));
       navigate('/');
     } catch (err: unknown) {
       setError((err as Error).message);
-      toast.error('Gagal menghapus jurnal: ' + (err as Error).message);
+      toast.error(t('detail.deleteFailed') + ': ' + (err as Error).message);
     }
   };
 
@@ -169,9 +169,9 @@ function DetailEntry() {
       if (error) throw error;
 
       setEntry({ ...entry, is_favorite: !entry.is_favorite });
-      toast.success(entry.is_favorite ? 'Dihapus dari Favorit' : 'Ditambahkan ke Favorit!');
+      toast.success(entry.is_favorite ? t('detail.removeFavoriteSuccess') : t('detail.addFavoriteSuccess'));
     } catch (err: unknown) {
-      toast.error('Gagal update favorit: ' + (err as Error).message);
+      toast.error(t('detail.updateFavoriteFailed') + ': ' + (err as Error).message);
     }
   };
 
@@ -187,12 +187,12 @@ function DetailEntry() {
       if (error) throw error;
 
       setEntry({ ...entry, is_archived: !entry.is_archived });
-      toast.success(entry.is_archived ? '📂 Dikeluarkan dari arsip' : '📁 Jurnal diarsipkan!');
+      toast.success(entry.is_archived ? t('archive.restoreSuccess') : t('detail.archiveSuccess'));
       if (!entry.is_archived) {
         navigate('/');
       }
     } catch (err: unknown) {
-      toast.error('Gagal mengarsipkan: ' + (err as Error).message);
+      toast.error(t('detail.archiveFailed') + ': ' + (err as Error).message);
     }
   };
 

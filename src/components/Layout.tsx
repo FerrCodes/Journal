@@ -9,12 +9,12 @@ import HelpModal from './HelpModal';
 import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard,
+  PanelLeft,
   PenSquare,
   BarChart3,
   Moon,
   Sun,
   LogOut,
-  ChevronLeft,
   ChevronRight,
   Settings,
   ChevronUp,
@@ -24,6 +24,7 @@ import {
   Activity,
   Download,
   HelpCircle,
+  Globe
 } from 'lucide-react';
 
 function Layout({ refreshActivity }: { refreshActivity: () => void }) {
@@ -35,7 +36,7 @@ function Layout({ refreshActivity }: { refreshActivity: () => void }) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
@@ -44,6 +45,7 @@ function Layout({ refreshActivity }: { refreshActivity: () => void }) {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isLangSubMenuOpen, setIsLangSubMenuOpen] = useState(false);
 
   const handleLogout = async () => {
   try {
@@ -137,10 +139,10 @@ function Layout({ refreshActivity }: { refreshActivity: () => void }) {
   };
 
   const navItems = [
-  { to: '/', icon: LayoutDashboard, label: t('nav.dashboard') },
   { to: '/create', icon: PenSquare, label: t('nav.add') },
-  { to: '/stats', icon: BarChart3, label: t('nav.stats') },
   { to: '/calendar', icon: Calendar, label: t('nav.calendar') },
+  { to: '/', icon: LayoutDashboard, label: t('nav.dashboard') },
+  { to: '/stats', icon: BarChart3, label: t('nav.stats') },
   { to: '/archive', icon: Archive, label: t('nav.archive') },
   {
     to: '/activity',
@@ -196,7 +198,6 @@ const bottomNavItems = [
             <span className="text-2xl flex-shrink-0"></span>
             {!isCollapsed && (
               <span className="text-xl font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap flex items-center gap-1">
-                <img src="/logo.png" alt="Journal App" className="w-10 h-10" />
                 Journal
               </span>
             )}
@@ -213,9 +214,9 @@ const bottomNavItems = [
             `}
           >
             {isCollapsed ? (
-              <ChevronRight className="w-4 h-4" />
+              <PanelLeft className="w-5 h-5" />
             ) : (
-              <ChevronLeft className="w-4 h-4" />
+              <PanelLeft className="w-5 h-5" />
             )}
           </button>
         </div>
@@ -284,7 +285,7 @@ const bottomNavItems = [
         {isUserDropdownOpen && (
           <div 
             className={`
-              absolute z-50 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-hidden animate-fadeInUp
+              absolute z-50 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-visible animate-fadeInUp
               ${isCollapsed 
                 ? 'bottom-14 left-10 w-56'
                 : 'bottom-full left-0 right-0 mb-2 w-auto' 
@@ -318,6 +319,47 @@ const bottomNavItems = [
                   <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${theme === 'dark' ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
               </button>
+              {/* === FITUR BARU: SUBMENU LANGUAGE === */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setIsLangSubMenuOpen(true)}
+                onMouseLeave={() => setIsLangSubMenuOpen(false)}
+              >
+                <button className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group text-left">
+                  <div className="flex items-center gap-3">
+                    <Globe className="w-4 h-4 text-gray-400 group-hover:text-blue-500" />
+                    <span className="text-sm font-medium">{t('settings.language')}</span>
+                  </div>
+                  {/* Icon panah kecil ke kanan */}
+                  <ChevronRight className="w-3 h-3 text-gray-400" />
+                </button>
+
+                {/* Submenu Pilihan Bahasa (Muncul saat Hover) */}
+                {isLangSubMenuOpen && (
+                  <div className="absolute left-full bottom-0 ml-1 w-40 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-hidden z-50 animate-fadeIn">
+                    <button
+                      onClick={() => { i18n.changeLanguage('id'); setIsLangSubMenuOpen(false); closeUserDropdown(); }}
+                      className={`flex items-center gap-2 w-full px-4 py-2.5 text-sm transition ${
+                        i18n.language === 'id' 
+                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium' 
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                    Indonesia
+                    </button>
+                    <button
+                      onClick={() => { i18n.changeLanguage('en'); setIsLangSubMenuOpen(false); closeUserDropdown(); }}
+                      className={`flex items-center gap-2 w-full px-4 py-2.5 text-sm transition ${
+                        i18n.language === 'en' 
+                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium' 
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                    English
+                    </button>
+                  </div>
+                )}
+              </div>
                 
               <div className="border-t border-gray-100 dark:border-slate-700 my-1" />
                 

@@ -116,9 +116,8 @@ function Stats() {
       <div className="p-4 bg-red-100 dark:bg-red-900/30 rounded-lg text-red-700 dark:text-red-300">
         ❌ {error}
         <br />
-        <Link to="/" className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 inline-block mt-2">
-          ← Kembali ke Dashboard
-        </Link>
+        <ArrowLeft className="hidden sm:inline">←</ArrowLeft>
+        <ArrowLeft className="sm:hidden">←</ArrowLeft>
       </div>
     );
   }

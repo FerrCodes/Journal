@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '../services/supabase';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowLeft, Calendar as CalendarIcon } from 'lucide-react';
 import type { JournalEntry } from '../types/journal';
 import { MOOD_OPTIONS } from '../types/journal';
 import { useTranslation } from 'react-i18next';
@@ -219,12 +219,8 @@ function Calendar() {
               {t('calendar.title')}
             </h1>
           </div>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-sm"
-          >
-            ← Kembali
-          </Link>
+          <ArrowLeft className="hidden sm:inline">←</ArrowLeft>
+          <ArrowLeft className="sm:hidden">←</ArrowLeft>
         </div>
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-8 text-center">
           <div className="text-6xl mb-4">📝</div>
@@ -259,8 +255,8 @@ function Calendar() {
           to="/"
           className="inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-sm"
         >
-          <span className="hidden sm:inline">← Kembali</span>
-          <span className="sm:hidden">←</span>
+          <ArrowLeft className="hidden sm:inline">←</ArrowLeft>
+          <ArrowLeft className="sm:hidden">←</ArrowLeft>
         </Link>
       </div>
 

@@ -68,6 +68,7 @@
   "modal": {
     "aboutTitle": "Tentang Journal App",
     "tabs": {
+      "general": "Umum",
       "about": "Tentang",
       "features": "Fitur",
       "technology": "Teknologi",
@@ -140,6 +141,7 @@
     "showFavorites": "Tampilkan Favorit",
     "addNewJournal": "Tambah Jurnal Baru",
     "archive": "Arsip",
+    "activity": "Lihat Aktivitas",
     "totalJournals": "Total Jurnal",
     "mostCommonMood": "Mood Terbanyak",
     "moodVariation": "Variasi Mood",

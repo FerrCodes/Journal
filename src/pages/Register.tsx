@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { toast } from 'sonner'
 import { supabase } from '../services/supabase';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserPlus, Mail, Lock, Eye, EyeOff, X, BookOpen, Camera, FileDown, PenSquare, BarChart3, Calendar, Info} from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, BookOpen, PenSquare, BarChart3, Calendar, Info, X, FileDown, Camera, Sun, Moon, Globe, UserPlus, Settings as SettingsIcon } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 
 function Register() {
@@ -14,7 +15,8 @@ function Register() {
   const [activeAboutTab, setActiveAboutTab] = useState('about');
   const navigate = useNavigate();
   const [isAboutOpen, setIsAboutOpen] = useState(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { theme, toggleTheme } = useTheme();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,12 +100,12 @@ function Register() {
               <div className="flex flex-col flex-1 overflow-hidden">
                 {/* Tab Navigation */}
                 <div className="flex justify-center gap-0.5 sm:gap-1 px-3 sm:px-6 pt-3 sm:pt-4 border-b border-gray-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
-                  {['about', 'features', 'technology', 'credits', 'social'].map((tabKey) => (
+                  {['general', 'about', 'features', 'technology', 'credits', 'social'].map((tabKey) => (
                     <button
                       key={tabKey}
                       onClick={() => setActiveAboutTab(tabKey)}
                       className={`
-                        px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-t-lg sm:rounded-t-xl transition whitespace-nowrap
+                        px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-t-lg sm:rounded-t-xl transition whitespace-nowrap flex-shrink-0
                         ${activeAboutTab === tabKey
                           ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-b-2 border-blue-500'
                           : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-800'
@@ -117,6 +119,70 @@ function Register() {
                 
                 {/* Konten Tab */}
                 <div className="flex-1 overflow-y-auto p-6">
+                {/* Tab: Umum (Baru!) */}
+                  {activeAboutTab === 'general' && (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <SettingsIcon className="w-5 h-5 text-blue-500" />
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t('settings.tabs.general')}</h3>
+                      </div>
+
+                      <div className="bg-gray-50 dark:bg-slate-700/50 rounded-xl p-4 space-y-4">
+                        {/* Pilihan Bahasa */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <Globe className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('settings.language')}</span>
+                          </div>
+                          <select
+                            value={i18n.language}
+                            onChange={(e) => i18n.changeLanguage(e.target.value)}
+                            className="px-3 py-1.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 outline-none text-sm cursor-pointer"
+                          >
+                            <option value="id">Indonesia</option>
+                            <option value="en">English</option>
+                          </select>
+                        </div>
+
+                        <div className="border-t border-gray-200 dark:border-slate-600"></div>
+
+                        {/* Pilihan Tema */}
+                        <div>
+                          <div className="flex items-center gap-3 mb-3">
+                            <Sun className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('settings.theme')}</span>
+                          </div>
+                          <div className="flex gap-2 pl-8">
+                            <button
+                              onClick={() => { if (theme !== 'light') toggleTheme(); }}
+                              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl border-2 transition text-sm ${
+                                theme === 'light'
+                                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                                  : 'border-gray-200 dark:border-slate-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-600'
+                              }`}
+                            >
+                              <Sun className="w-4 h-4" />
+                              <span>{t('settings.light')}</span>
+                              {theme === 'light' && <span className="text-blue-500 text-xs">✓</span>}
+                            </button>
+                            <button
+                              onClick={() => { if (theme !== 'dark') toggleTheme(); }}
+                              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl border-2 transition text-sm ${
+                                theme === 'dark'
+                                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                                  : 'border-gray-200 dark:border-slate-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-600'
+                              }`}
+                            >
+                              <Moon className="w-4 h-4" />
+                              <span>{t('settings.dark')}</span>
+                              {theme === 'dark' && <span className="text-blue-500 text-xs">✓</span>}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Tab: Tentang */}
                   {activeAboutTab === 'about' && (
                     <div className="space-y-4">

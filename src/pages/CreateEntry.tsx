@@ -4,7 +4,7 @@ import { supabase } from '../services/supabase';
 import { MOOD_OPTIONS } from '../types/journal';
 import type { MoodValue } from '../types/journal';
 import { toast } from 'sonner'
-import { PenSquare, Save, Tag, Loader2, Image, Upload, X, Music, Cloud } from 'lucide-react';
+import { PenSquare, Save, Tag, Loader2, Image, Upload, X, Music, Cloud, ArrowLeft } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from 'react-i18next';
 
@@ -140,8 +140,8 @@ function CreateEntry() {
           to="/"
           className="inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-xs sm:text-sm"
         >
-          <span className="hidden sm:inline">←</span>
-          <span className="sm:hidden">←</span>
+          <ArrowLeft className="hidden sm:inline">←</ArrowLeft>
+          <ArrowLeft className="sm:hidden">←</ArrowLeft>
         </Link>
       </div>
 

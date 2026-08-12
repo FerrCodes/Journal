@@ -34,6 +34,7 @@
   "modal": {
     "aboutTitle": "About Journal App",
     "tabs": {
+      "general": "General",
       "about": "About",
       "features": "Features",
       "technology": "Technology",
@@ -140,6 +141,7 @@
     "showFavorites": "Show Favorites",
     "addNewJournal": "Add New Journal",
     "archive": "Archive",
+    "activity": "View Activity",
     "totalJournals": "Total Journals",
     "mostCommonMood": "Most Common Mood",
     "moodVariation": "Mood Variation",

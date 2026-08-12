@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../services/supabase';
 import { Link } from 'react-router-dom';
-import { Archive, ArchiveRestore, Calendar } from 'lucide-react';
+import { Archive, ArchiveRestore, Calendar, ArrowLeft } from 'lucide-react';
 import type { JournalEntry } from '../types/journal';
 import { MOOD_OPTIONS } from '../types/journal';
 import { toast } from 'sonner';
@@ -88,8 +88,8 @@ function ArchivePage() {
             to="/" 
             className="inline-flex items-center gap-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-sm"
           >
-            <span className="hidden sm:inline">← {t('common.backToDashboard')}</span>
-            <span className="sm:hidden">←</span>
+          <ArrowLeft className="hidden sm:inline">←</ArrowLeft>
+          <ArrowLeft className="sm:hidden">←</ArrowLeft>
           </Link>
         </div>
         <p className="mt-2 text-sm mb-4 text-gray-500 dark:text-gray-400">

@@ -17,6 +17,7 @@ import {
   Globe,
   LogOut,
   ArrowRight,
+  ArrowLeft,
 } from 'lucide-react';
 import { exportAllEntries } from '../utils/exportPDF';
 import ConfirmModal from '../components/ConfirmModal';
@@ -167,8 +168,8 @@ const handleLogout = async () => {
           to="/"
           className="inline-flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-lg transition text-xs sm:text-sm"
         >
-          <span className="hidden sm:inline">← Kembali</span>
-          <span className="sm:hidden">←</span>
+          <ArrowLeft className="hidden sm:inline">←</ArrowLeft>
+          <ArrowLeft className="sm:hidden">←</ArrowLeft>
         </Link>
       </div>
 

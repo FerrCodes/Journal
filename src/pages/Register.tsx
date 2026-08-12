@@ -99,8 +99,8 @@ function Register() {
               {/* Body dengan Tab */}
               <div className="flex flex-col flex-1 overflow-hidden">
                 {/* Tab Navigation */}
-                <div className="flex justify-center gap-0.5 sm:gap-1 px-3 sm:px-6 pt-3 sm:pt-4 border-b border-gray-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
-                  {['general', 'about', 'features', 'technology', 'credits', 'social'].map((tabKey) => (
+                <div className="flex justify-start sm:justify-center gap-1 sm:gap-2 px-4 sm:px-6 pt-3 sm:pt-4 border-b border-gray-200 dark:border-slate-700 overflow-x-auto scrollbar-hide">
+                  {['about', 'general', 'features', 'technology', 'credits', 'social'].map((tabKey) => (
                     <button
                       key={tabKey}
                       onClick={() => setActiveAboutTab(tabKey)}

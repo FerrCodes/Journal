@@ -4,7 +4,6 @@ import { useTheme } from '../context/ThemeContext';
 import { toast } from 'sonner'
 import { useState, useRef, useEffect } from 'react';
 import SettingsModal from './SettingsModal';
-import { exportAllEntries } from '../utils/exportPDF';
 import HelpModal from './HelpModal'; 
 import { useTranslation } from 'react-i18next';
 import {
@@ -22,7 +21,6 @@ import {
   Calendar,
   Archive,
   Activity,
-  Download,
   HelpCircle,
   Globe
 } from 'lucide-react';
@@ -110,33 +108,6 @@ function Layout({ refreshActivity }: { refreshActivity: () => void }) {
   document.addEventListener('mousedown', handleClickOutside);
   return () => document.removeEventListener('mousedown', handleClickOutside);
 }, [isProfileDropdownOpen]);
-
-// <--- FUNGSI EXPORT BARU (Disadur dari SettingsModal)
-  const handleExportData = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User tidak ditemukan');
-
-      const { data: entries, error } = await supabase
-        .from('entries')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      if (!entries || entries.length === 0) {
-        toast.info(t('layout.noJournalsExport'))
-        return;
-      }
-
-      await exportAllEntries(entries);
-      toast.success(t('layout.exportSuccess'))
-    } catch (err: unknown) {
-      toast.error(t('layout.exportFailed') + (err as Error).message);
-    } finally {
-      closeUserDropdown();
-    }
-  };
 
   const navItems = [
   { to: '/create', icon: PenSquare, label: t('nav.add') },
@@ -362,15 +333,6 @@ const bottomNavItems = [
               </div>
                 
               <div className="border-t border-gray-100 dark:border-slate-700 my-1" />
-                
-              {/* === FITUR BARU: EXPORT DATA === */}
-              <button
-                onClick={handleExportData}
-                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition group text-left"
-              >
-                <Download className="w-4 h-4 text-gray-400 group-hover:text-green-500" />
-                <span className="text-sm font-medium">{t('layout.exportData')}</span>
-              </button>
 
               {/* Pengaturan */}
               <button

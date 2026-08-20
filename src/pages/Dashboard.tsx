@@ -5,7 +5,7 @@ import type { JournalEntry } from '../types/journal';
 import { MOOD_OPTIONS } from '../types/journal';
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next';
-import { PenSquare, Activity, Search, Filter, X, BarChart3, Calendar, Smile, BookOpen, Star, Cloud, Music, ChevronDown, Archive, } from 'lucide-react';
+import { Activity, Search, Filter, X, BarChart3, Calendar, Smile, BookOpen, Star, Cloud, Music, ChevronDown, Archive, } from 'lucide-react';
 
 function Dashboard() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -216,17 +216,6 @@ function Dashboard() {
                   {showFavoritesOnly ? t('dashboard.showAll') : t('dashboard.showFavorites')}
                 </button>
                 <Link
-                  to="/create"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsDropdownOpen(false);
-                  }}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition"
-                >
-                  <PenSquare className="w-4 h-4 text-blue-500" />
-                  {t('dashboard.addNewJournal')}
-                </Link>
-                <Link
                   to="/activity"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -365,7 +354,7 @@ function Dashboard() {
               className="px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-200 hover:bg-gray-300 dark:bg-slate-600 dark:hover:bg-slate-500 text-gray-700 dark:text-gray-300 rounded-xl transition flex items-center gap-1 text-sm"
             >
               <X className="w-3 h-3 sm:w-4 sm:h-4" />
-              {t('common.reset')}
+              {t('Reset')}
             </button>
           )}
         </div>
